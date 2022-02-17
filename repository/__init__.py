@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
+from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -18,6 +19,20 @@ login = LoginManager(app)
 login.login_view = 'login'
 login.login_message = 'You need to be logged in to view this page'
 login.login_message_category = 'info'
+
+# GitHub Configuration
+oauth = OAuth(app)
+github = oauth.register(
+    name='github',
+    client_id=os.environ.get("CLIENT_ID"),
+    client_secret=os.environ.get("SECRET_ID"),
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_params=None,
+    authorize_url='https://github.com/login/oauth/authorize',
+    authorize_params=None,
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'user:email'},
+)
 
 from repository import routes, models
 

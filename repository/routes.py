@@ -1,7 +1,7 @@
 import secrets, os
 import time
 from PIL import Image
-from repository import app, db
+from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -56,6 +56,31 @@ def index():
 # @login_required
 # def home():
 #     return render_template('home.html', title='Sign In')
+
+
+# GitHub Login
+@app.route('/users/github-login')
+def github_login():
+    redirect_url = url_for('github_authorize', _external=True)
+    return github.authorize_redirect(redirect_url)
+
+@app.route('/users/github-login/authorized')
+def github_authorize():
+    token = github.authorize_access_token()
+    resp = github.get('user', token=token)
+
+    resp = github.get('user/emails', token=token)
+    profile = resp.json()
+    # print(profile, token)
+    gh_emails = [ gh_email['email'] for gh_email in profile]
+    for gh_email in gh_emails:
+        user = User.query.filter_by(email=gh_email).first()
+        if user is not None:
+            login_user(user, remember=True)
+            flash("Successfully logged in", "success")
+            return redirect('/')
+    flash('GitHub email not found! in database', "error")
+    return redirect(url_for('login'))
 
 @app.route('/users/login', methods=['GET', 'POST'])
 def login():

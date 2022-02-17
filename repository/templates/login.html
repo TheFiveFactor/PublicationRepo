@@ -134,7 +134,7 @@
                         <a href="#" class="social">
                             <i class="fa-brands fa-twitter"></i>
                         </a>
-                        <a href="#" class="social"><i class="fa-brands fa-github"></i></a>
+                        <a href="{{ url_for('github_login') }}" class="social"><i class="fa-brands fa-github"></i></a>
                     </div>
                     <span>Or use email</span>
                     {% with messages = get_flashed_messages(with_categories=true) %}
