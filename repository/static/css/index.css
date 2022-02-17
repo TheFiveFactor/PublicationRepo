@@ -1,0 +1,45 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 300px auto;
+    grid-gap: 30px;
+    background-color: #343A40;
+    padding: 10px;
+    text-align: center;
+}
+
+.grid-container-opp {
+    display: grid;
+    grid-template-columns: auto 300px;
+    grid-gap: 50px;
+    background-color: #343A40;
+    padding: 20px;
+    text-align: center;
+}
+
+/* .grid-container > div {
+background-color: #F1F1F1;
+text-align: center;
+font-size: 30px;
+padding: 95px 30px 10px 40px;
+} */
+
+.circle {
+    border-radius: 50%;
+    width: 6em;
+    height:6em;
+    text-align: center;
+    justify-content: center;
+    line-height:0;
+    padding: 145px 30px 10px 40px;
+    background-color: #F1F1F1;
+    font-size: 50px;
+    font-family: fantasy;
+}
+
+
+.content {
+    background-color: #F1F1F1;
+    text-align: center;
+    font-size: 30px;
+    padding: 15px;
+}
