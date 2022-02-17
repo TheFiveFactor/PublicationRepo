@@ -2,3 +2,5 @@ FLASK_APP=main.py
 FLASK_ENV=development
 MAIL_USERNAME=''
 MAIL_PASSWORD=''
+CLIENT_ID=''
+SECRET_ID=''
