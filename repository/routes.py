@@ -1,7 +1,7 @@
 import secrets, os
 import time
 from PIL import Image
-from repository import app, db, github
+from repository import app, db, github, facebook
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -79,7 +79,7 @@ def github_authorize():
             login_user(user, remember=True)
             flash("Successfully logged in", "success")
             return redirect('/')
-    flash('GitHub email not found! in database', "error")
+    flash('GitHub email not found in database! Try with Email', "error")
     return redirect(url_for('login'))
 
 @app.route('/users/login', methods=['GET', 'POST'])
