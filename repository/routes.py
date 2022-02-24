@@ -1,7 +1,7 @@
 import secrets, os
 import time
 from PIL import Image
-from repository import app, db, github, facebook
+from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -211,3 +211,13 @@ def forgot_password():
         flash('An email has been sent with instruction to reset your password', 'info')
         return redirect(url_for('forgot_password'))
     return render_template('forgot_password.html', title='Reset Password', form=form)
+
+
+# Publish paper
+@app.route('/publish-paper', methods=['GET', 'POST'])
+@login_required
+def publish_paper():
+    if current_user.role.name == 'student':
+        flash('Students cannot publish papers', 'warning')
+        return redirect(url_for('index'))
+    return render_template('publish_paper.html')

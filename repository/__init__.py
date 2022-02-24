@@ -33,17 +33,17 @@ github = oauth.register(
     api_base_url='https://api.github.com/',
     client_kwargs={'scope': 'user:email'},
 )
-facebook = oauth.register(
-    name='facebook',
-    client_id=os.environ.get('FACEBOOK_CLIENT_ID'),
-    client_secret=os.environ.get('FACEBOOK_CLIENT_SECRET'),
-    access_token_url='https://graph.facebook.com/oauth/access_token',
-    access_token_params=None,
-    authorize_url='https://www.facebook.com/dialog/oauth',
-    authorize_params=None,
-    api_base_url='https://graph.facebook.com/',
-    client_kwargs={'scope': 'email'},
-)
+# facebook = oauth.register(
+#     name='facebook',
+#     client_id=os.environ.get('FACEBOOK_CLIENT_ID'),
+#     client_secret=os.environ.get('FACEBOOK_CLIENT_SECRET'),
+#     access_token_url='https://graph.facebook.com/oauth/access_token',
+#     access_token_params=None,
+#     authorize_url='https://www.facebook.com/dialog/oauth',
+#     authorize_params=None,
+#     api_base_url='https://graph.facebook.com/',
+#     client_kwargs={'scope': 'email'},
+# )
 
 from repository import routes, models
 
@@ -62,6 +62,9 @@ admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstr
 admin.add_view(ModelView(models.Role, db.session))
 admin.add_view(ModelView(models.Institution, db.session))
 admin.add_view(ModelView(models.User, db.session))
+admin.add_view(ModelView(models.Department, db.session))
+admin.add_view(ModelView(models.DepartmentAreas, db.session))
+admin.add_view(ModelView(models.PaperType, db.session))
 
 class AnalyticsView(BaseView):
     @expose('/')

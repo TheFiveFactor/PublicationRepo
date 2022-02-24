@@ -75,3 +75,43 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return "<User id: '{}', Name: '{}'>".format(self.id, self.fname + " " + self.lname)
+
+class Department(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True)
+    department_areas = db.relationship('DepartmentAreas', backref='department', lazy=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return "<Community '{}'>".format(self.name)
+
+class DepartmentAreas(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True)
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'), nullable=False)
+    # publish_papers = db.relationship('PublishPaper', backref='paper_type', lazy=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return "<Department Area: '{}'>".format(self.name)
+
+class PaperType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True)
+    # publish_papers = db.relationship('PublishPaper', backref='paper_type', lazy=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+class PublishPaper(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    abstract = db.Column(db.Text())
+    # paper_type = db.Column(db.Integer, db.ForeignKey('paper_type.id'), nullable=False)
+    # department_area_id = db.Column(db.Integer, db.ForeignKey('department_areas.id'), nullable=False) # Appears in Collection
+    # authors = db.relationship('User', backref='pub', lazy=True)
+    publisher = db.Column(db.String(255), nullable=False)
+    published_year = db.Column(db.Integer, nullable=False, default=datetime.utcnow().year)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
