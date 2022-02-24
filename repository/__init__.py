@@ -65,6 +65,7 @@ admin.add_view(ModelView(models.User, db.session))
 admin.add_view(ModelView(models.Department, db.session))
 admin.add_view(ModelView(models.DepartmentAreas, db.session))
 admin.add_view(ModelView(models.PaperType, db.session))
+admin.add_view(ModelView(models.PublishPaper, db.session))
 
 class AnalyticsView(BaseView):
     @expose('/')

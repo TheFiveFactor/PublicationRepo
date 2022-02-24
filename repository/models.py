@@ -90,7 +90,7 @@ class DepartmentAreas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'), nullable=False)
-    # publish_papers = db.relationship('PublishPaper', backref='paper_type', lazy=True)
+    publish_papers = db.relationship('PublishPaper', backref='department_area', lazy=True) # new for publish_paper
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
@@ -100,17 +100,26 @@ class DepartmentAreas(db.Model):
 class PaperType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True)
-    # publish_papers = db.relationship('PublishPaper', backref='paper_type', lazy=True)
+    publish_papers = db.relationship('PublishPaper', backref='paper_type', lazy=True) # new for publish_paper
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return "<PaperType: '{}'>".format(self.name)
+
+author_publish_paper = db.Table('author_publish_papers',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('publish_paper_id', db.Integer, db.ForeignKey('publish_paper.id'), primary_key=True)
+)
 
 class PublishPaper(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     abstract = db.Column(db.Text())
-    # paper_type = db.Column(db.Integer, db.ForeignKey('paper_type.id'), nullable=False)
-    # department_area_id = db.Column(db.Integer, db.ForeignKey('department_areas.id'), nullable=False) # Appears in Collection
-    # authors = db.relationship('User', backref='pub', lazy=True)
+    paper_type_id = db.Column(db.Integer, db.ForeignKey('paper_type.id'), nullable=False) # new for publish_paper
+    department_area_id = db.Column(db.Integer, db.ForeignKey('department_areas.id'), nullable=False) # new for publish_paper # Appears in Collection
+    authors = db.relationship('User', secondary=author_publish_paper, lazy='subquery',
+        backref=db.backref('publish_papers', lazy=True))
     publisher = db.Column(db.String(255), nullable=False)
     published_year = db.Column(db.Integer, nullable=False, default=datetime.utcnow().year)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
