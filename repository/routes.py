@@ -5,9 +5,9 @@ from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from repository.models import Institution, Role, User
+from repository.models import Institution, PaperType, PublishPaper, Role, User, Department
 from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
-    RequestPasswordResetForm, ResetPasswordForm
+    RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm
 
 import smtplib
 from email.message import Message
@@ -25,6 +25,15 @@ def save_profile_picture(form_picture):
     i.save(picture_path)
 
     return picture_fn
+
+def save_publish_paper_pdf(form_paper):
+    random_hex = secrets.token_hex(32)
+    f_name, f_ext = os.path.splitext(form_paper.filename)
+    new_fname = "_".join(f_name.split(" "))
+    paper_fn = random_hex + "-" + new_fname + f_ext
+    paper_path = os.path.join(app.root_path, 'static/publish_papers', paper_fn)
+    form_paper.save(paper_path)
+    return paper_fn
 
 def send_reset_email(user):
     expire_ex = 1200
@@ -51,12 +60,6 @@ def send_reset_email(user):
 @app.route('/')
 def index():
     return render_template('index.html')
-
-# @app.route('/home', methods=['GET', 'POST'])
-# @login_required
-# def home():
-#     return render_template('home.html', title='Sign In')
-
 
 # GitHub Login
 @app.route('/users/github-login')
@@ -220,4 +223,24 @@ def publish_paper():
     if current_user.role.name == 'student':
         flash('Students cannot publish papers', 'warning')
         return redirect(url_for('index'))
-    return render_template('publish_paper.html')
+
+    departments = Department.query.all()
+    form = PublishPaperForm(request.form)
+    if request.method == "POST" and form.validate():
+        publish_paper_modal = PublishPaper(title=form.title.data,
+            abstract=form.abstract.data, paper_type_id=int(form.paper_type.data),
+            department_area_id=int(form.department_area.data), publisher=form.publisher.data)
+        for author_id in form.authors.data:
+            author = User.query.filter_by(id=int(author_id)).first()
+            if author:
+                publish_paper_modal.authors.append(author)
+
+        if 'paper_file' in request.files and request.files['paper_file'].filename != '':
+            paper_file = save_publish_paper_pdf(request.files['paper_file'])
+            publish_paper_modal.paper_file = paper_file
+
+        db.session.add(publish_paper_modal)
+        db.session.commit()
+        flash('Your request has been submitted successfully', 'success')
+        return redirect(url_for('publish_paper'))
+    return render_template('publish_paper.html',form=form, departments=departments)

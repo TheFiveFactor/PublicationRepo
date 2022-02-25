@@ -45,6 +45,22 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
+    @staticmethod
+    def getWhoCanPublish():
+        return User.query.join(Role).filter(Role.name!="student").all()
+
+    @staticmethod
+    def getFaculties():
+        return User.query.join(Role).filter(Role.name=="faculty").all()
+
+    @staticmethod
+    def getStudents():
+        return User.query.join(Role).filter(Role.name=="student").all()
+
+    @staticmethod
+    def getPanels():
+        return User.query.join(Role).filter(Role.name=="panel").all()
+
     def get_reset_token(self, expires_sec=1200):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
@@ -122,5 +138,13 @@ class PublishPaper(db.Model):
         backref=db.backref('publish_papers', lazy=True))
     publisher = db.Column(db.String(255), nullable=False)
     published_year = db.Column(db.Integer, nullable=False, default=datetime.utcnow().year)
+    paper_file = db.Column(db.String(155), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    def get_paper_file_url(self):
+        if self.paper_file:
+            return url_for('static', filename='publish_papers/' + self.paper_file)
+
+    def __repr__(self):
+        return "<PublishPaper: '{}'>".format(self.title[:50] + (self.title[50:] and '..'))
