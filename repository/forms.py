@@ -1,3 +1,4 @@
+from os import access
 import unicodedata
 from flask_login import current_user
 from flask_wtf import FlaskForm
@@ -6,7 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Selec
     FileField, TextAreaField, SelectMultipleField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from wtforms.widgets import TextArea
-from repository.models import Department, DepartmentAreas, PaperType, User, Role, Institution
+from repository.models import Department, DepartmentAreas, PaperType, User, Role, Institution, PaperAccessEnum
 from datetime import datetime
 
 
@@ -98,5 +99,6 @@ class PublishPaperForm(FlaskForm):
         validators=[DataRequired()])
     publisher = StringField('Publisher', validators=[DataRequired(), Length(min=1, max=255)])
     published_year = IntegerField('Publishing Year', validators=[DataRequired(), NumberRange(max=datetime.utcnow().year)])
+    access = SelectField('Access', choices=PaperAccessEnum.fetch_fields(), validators=[DataRequired()])
     paper_file = FileField('Upload file as pdf', validators=[FileAllowed(['pdf'])])
     submit = SubmitField('Publish Paper')

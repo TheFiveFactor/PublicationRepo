@@ -4,6 +4,16 @@ from datetime import datetime
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import url_for
+import enum
+
+class PaperAccessEnum(enum.Enum):
+    ALLOW_ALL = 'Allow All'
+    ONLY_YOUR_COLLEGE = 'Only Faculties and Your College Students'
+    ONLY_FACULTIES = 'Faculties Only'
+
+    @staticmethod
+    def fetch_fields():
+        return [(c.name, c.value) for c in PaperAccessEnum]
 
 
 class Role(db.Model):
@@ -139,8 +149,20 @@ class PublishPaper(db.Model):
     publisher = db.Column(db.String(255), nullable=False)
     published_year = db.Column(db.Integer, nullable=False, default=datetime.utcnow().year)
     paper_file = db.Column(db.String(155), nullable=True)
+    access = db.Column(db.Enum(PaperAccessEnum), default=PaperAccessEnum.ALLOW_ALL)
+    is_paper_authorized = db.Column(db.Boolean, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    @staticmethod
+    def get_pending_papers():
+        return PublishPaper.query.filter_by(is_paper_authorized=None).all()
+
+    def authorize_paper(self):
+        self.is_paper_authorized = True
+
+    def reject_paper(self):
+        self.is_paper_authorized = False
 
     def get_paper_file_url(self):
         if self.paper_file:

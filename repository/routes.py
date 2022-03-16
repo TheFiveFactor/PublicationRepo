@@ -227,6 +227,7 @@ def publish_paper():
     departments = Department.query.all()
     form = PublishPaperForm(request.form)
     if request.method == "POST" and form.validate():
+        print(request.form)
         publish_paper_modal = PublishPaper(title=form.title.data,
             abstract=form.abstract.data, paper_type_id=int(form.paper_type.data),
             department_area_id=int(form.department_area.data), publisher=form.publisher.data)
