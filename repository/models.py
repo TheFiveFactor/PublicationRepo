@@ -54,6 +54,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    faculty = db.relationship("Faculty", back_populates="user", uselist=False)
 
     @staticmethod
     def getWhoCanPublish():
@@ -170,3 +171,26 @@ class PublishPaper(db.Model):
 
     def __repr__(self):
         return "<PublishPaper: '{}'>".format(self.title[:50] + (self.title[50:] and '..'))
+
+class Faculty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    #fname = db.Column(db.String(64), index=True)
+    #lname = db.Column(db.String(64), index=True)
+    #profile_image = db.Column(db.String(30), nullable=True)
+    #email = db.Column(db.String(120), index=True, unique=True)
+    #institution_id = db.Column(db.Integer, db.ForeignKey('institution.id'), nullable=False)
+    #password_hash = db.Column(db.String(128))
+    #by_email = db.Column(db.Boolean, default=True, nullable=False)
+    #role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
+    #created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    #updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    about_me = db.Column(db.Text, nullable=False)
+    designation = db.Column(db.String(100), nullable=False)
+    department = db.Column(db.String(100), nullable=False)
+    linkedin = db.Column(db.String(150), nullable=True)
+    github = db.Column(db.String(150), nullable=True)
+    phone_number = db.Column(db.String(20), nullable = True) 
+    address = db.Column(db.String(100), nullable = True)
+    work_exp = db.Column(db.String(255), nullable = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", back_populates="faculty")

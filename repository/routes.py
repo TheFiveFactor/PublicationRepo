@@ -245,3 +245,7 @@ def publish_paper():
         flash('Your request has been submitted successfully', 'success')
         return redirect(url_for('publish_paper'))
     return render_template('publish_paper.html',form=form, departments=departments)
+
+@app.route('/faculty/<int:id>')
+def faculty_profile(id):
+    return render_template('faculty_profile.html')
