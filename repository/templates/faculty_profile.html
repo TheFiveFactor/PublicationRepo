@@ -114,16 +114,16 @@
     <div class="col-3 bg-light">
       <div style="background: linear-gradient(150deg, #9217B5, #79E6F2 95%);">
         
-    <img src="https://cdn.glitch.global/cb0fb47f-a8c0-49d2-8f79-c86bc78b762a/img_avatar.png?v=1647488984248" alt="Avatar" class="avatar"><br><br>
+    <img src="{{ user.get_profile_image_url(300) }}" alt="Avatar" class="avatar"><br><br>
         <div class="card-body">
       <p class="p1">
-        Faculty Name
+        {{ user.fname + " " + user.lname }}
       </p>
       <p class="p2">
-        Designation
+        {{ user.faculty.designation }}
       </p>
       <p class="p3">
-        Department
+        {{ user.faculty.department }}
       </p>
       <br>
       <a style="text-decoration:none;" href="edit-profile.html" >
@@ -159,8 +159,7 @@
             About Me
         </h2>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu nulla eget lectus faucibus tincidunt. Aenean arcu neque, commodo commodo sem quis, feugiat vehicula massa. Aenean scelerisque diam a ante varius aliquet. Aliquam sed dui lectus. Ut eget lectus sodales, hendrerit quam ac, ornare sem. Mauris a massa auctor felis venenatis accumsan. Aliquam erat volutpat. Fusce risus massa, dapibus eu suscipit at, gravida sed risus. Nunc sed facilisis nisl. Phasellus congue dui non quam venenatis, id lacinia dui condimentum. Nunc vestibulum sed neque vitae ornare. Donec quis vestibulum arcu. Aliquam et lacus eget mauris euismod placerat mattis sed ex. Suspendisse ultricies odio eu ligula placerat, sed commodo mi pellentesque. Suspendisse luctus, orci vel dictum accumsan, est orci pharetra velit, eget pulvinar odio justo in augue. Maecenas non est nec lacus luctus semper.
-Sed gravida eros in orci blandit, at sollicitudin orci tempor. Pellentesque eget accumsan sem. Sed vitae pellentesque purus. Suspendisse posuere dui id nisl tristique fringilla. Curabitur vulputate ante in erat eleifend iaculis. Fusce quis est sit amet dui scelerisque fringilla. Praesent eu odio ac lacus efficitur elementum. Praesent facilisis justo vel enim vulputate convallis. Ut aliquam neque augue, eu pulvinar arcu egestas id. Vestibulum non lectus lobortis, pulvinar est in, bibendum tellus. Etiam sed fermentum velit.
+            {{ user.faculty.about_me }}
         </p>
         </p>
       <!-- About Me -->
@@ -170,7 +169,7 @@ Sed gravida eros in orci blandit, at sollicitudin orci tempor. Pellentesque eget
           Work Experience
       </h2>
       <p>
-        Details from Database - decide the format
+        {{ user.faculty.work_exp }}
       </p>
       </p>
       <!-- Work Experience -->
@@ -178,13 +177,13 @@ Sed gravida eros in orci blandit, at sollicitudin orci tempor. Pellentesque eget
     <!-- LinkedIn -->
       <tr>
       <td><i class="fab fa-linkedin"></i></td>
-      <td>Link from database</td>
+      <td>{{ user.faculty.linkedin }}</td>
     </tr>
     <!--LinkedIn -->
     <!-- Github -->
     <tr>
       <td><i class="fab fa-github"></i></td>
-      <td>Link from database</td>
+      <td>{{ user.faculty.github }}</td>
     </tr>
     
     <!-- Github -->
@@ -229,19 +228,19 @@ Sed gravida eros in orci blandit, at sollicitudin orci tempor. Pellentesque eget
         <i class="fas fa-envelope"></i> Email
       </h2>
       <p>
-        email from Database
+        {{ user.email }}
       </p><br>
       <h2 style="font-family:tahoma">
         <i class="fas fa-phone"></i> Phone
       </h2>
       <p>
-       Phone no. from Database
+        {{ user.faculty.phone_number }}
       </p><br>
       <h2 style="font-family:tahoma">
         <i class="fas fa-map-marker-alt"></i> Address
       </h2>
       <p>
-       Address from Database
+        {{ user.faculty.address }}
       </p>
     </div>
   </div>

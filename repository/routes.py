@@ -248,4 +248,5 @@ def publish_paper():
 
 @app.route('/faculty/<int:id>')
 def faculty_profile(id):
-    return render_template('faculty_profile.html')
+    user = User.query.get_or_404(id)
+    return render_template('faculty_profile.html', user=user)
