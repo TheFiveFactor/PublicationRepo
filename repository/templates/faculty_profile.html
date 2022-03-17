@@ -194,7 +194,27 @@
       
       <!--Page 2 -->
       <div id="publish" style="display:none; padding:0px 30px;">
-        <div>
+        {% for paper in user.publications() %}
+            <div>
+                <hr>
+                <h2>
+                    Abstract
+                </h2>
+                <p>
+                    {{ paper.abstract }}    
+                </p>
+            </div>
+          <div>
+                <h4>
+                    Link to the paper
+                </h4>
+                <p>
+                    {{ paper.paper_file }}  
+                </p>
+          </div>
+        {% endfor %}
+
+        <!-- <div>
           <hr>
           <h2>
             Abstract
@@ -210,7 +230,7 @@
           <p>
             Link from database
           </p>
-        </div>
+        </div> -->
       </div>
       <!--Page 2 -->
     </div>

@@ -94,6 +94,10 @@ class User(UserMixin, db.Model):
             user_bg = bg_and_color_list[self.id % bg_lis_len]
             return f'https://ui-avatars.com/api/?name={self.fname}+{self.lname}' + f'&background={user_bg[0]}&color={user_bg[1]}&size={img_size}'
 
+    
+    def publications(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id)).all()
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -102,6 +106,7 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return "<User id: '{}', Name: '{}'>".format(self.id, self.fname + " " + self.lname)
+
 
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -194,3 +199,6 @@ class Faculty(db.Model):
     work_exp = db.Column(db.String(255), nullable = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", back_populates="faculty")
+
+    def publications(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.user_id)).all()
