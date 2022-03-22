@@ -164,6 +164,9 @@ class PublishPaper(db.Model):
     def reject_paper(self):
         self.is_paper_authorized = False
 
+    def set_pending(self):
+        self.is_paper_authorized = None
+
     def get_paper_file_url(self):
         if self.paper_file:
             return url_for('static', filename='publish_papers/' + self.paper_file)
