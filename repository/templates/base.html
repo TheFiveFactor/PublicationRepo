@@ -66,7 +66,7 @@
             <ul class="nav navbar-nav ml-auto">
                 {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('faculty_profile', id=current_user.id) }}">
                             <span class="fas fa-user"></span> {{ current_user.fname + " " + current_user.lname }}
                         </a>
                     </li>

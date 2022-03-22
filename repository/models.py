@@ -54,6 +54,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    faculty = db.relationship("Faculty", back_populates="user", uselist=False)
 
     @staticmethod
     def getWhoCanPublish():
@@ -93,6 +94,10 @@ class User(UserMixin, db.Model):
             user_bg = bg_and_color_list[self.id % bg_lis_len]
             return f'https://ui-avatars.com/api/?name={self.fname}+{self.lname}' + f'&background={user_bg[0]}&color={user_bg[1]}&size={img_size}'
 
+    
+    def publications(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id)).all()
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -101,6 +106,7 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return "<User id: '{}', Name: '{}'>".format(self.id, self.fname + " " + self.lname)
+
 
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -173,3 +179,29 @@ class PublishPaper(db.Model):
 
     def __repr__(self):
         return "<PublishPaper: '{}'>".format(self.title[:50] + (self.title[50:] and '..'))
+
+class Faculty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    #fname = db.Column(db.String(64), index=True)
+    #lname = db.Column(db.String(64), index=True)
+    #profile_image = db.Column(db.String(30), nullable=True)
+    #email = db.Column(db.String(120), index=True, unique=True)
+    #institution_id = db.Column(db.Integer, db.ForeignKey('institution.id'), nullable=False)
+    #password_hash = db.Column(db.String(128))
+    #by_email = db.Column(db.Boolean, default=True, nullable=False)
+    #role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
+    #created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    #updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    about_me = db.Column(db.Text, nullable=False)
+    designation = db.Column(db.String(100), nullable=False)
+    department = db.Column(db.String(100), nullable=False)
+    linkedin = db.Column(db.String(150), nullable=True)
+    github = db.Column(db.String(150), nullable=True)
+    phone_number = db.Column(db.String(20), nullable = True) 
+    address = db.Column(db.String(100), nullable = True)
+    work_exp = db.Column(db.String(255), nullable = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", back_populates="faculty")
+
+    def publications(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.user_id)).all()

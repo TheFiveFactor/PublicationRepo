@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <style>
+.avatar {
+  vertical-align: middle;
+  width: 300px;
+  height: 300px;
+  border-radius: 52%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+}
+    .p1{
+        font-family: Arial, Helvetica, sans-serif;font-size:42px;font-weight:Bold;
+    }
+    .p2{
+         font-family: "Trebuchet MS", Verdana, sans-serif;font-size:30px;font-weight:normal;
+    }
+    .p3{
+          font-family: "Trebuchet MS", Verdana, sans-serif;font-size:28px;font-style: italic;
+    }
+    .block {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color:#5B5757;
+  padding: 14px 28px;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+  color:white;
+  font-family:Arial;
+      
+      
+}
+    .block:hover {
+  background-color:#918E8E;
+  color: black;
+      text-decoration: none;
+      
+    }
+ 
+
+
+</style>
+
+  <head>
+    <title>Faculty Publication Repository</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    />
+
+  </head>
+
+  <body>
+    
+     <!-- navbar /-->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top black">
+      
+      <a class="navbar-brand" href="#">
+        <img
+          src="https://cdn.glitch.global/cb0fb47f-a8c0-49d2-8f79-c86bc78b762a/539-5392274_amrita-university-logo-hd-png-download.png?v=1644943615078"
+          alt="Logo"
+          style="width: 30px"
+          class="rounded-pill"
+        />
+      </a>
+      
+      <a class="navbar-brand" href="#" style="color: white; font-size: 18px"
+        >The Five Factor</a
+      >
+      <button
+        class="navbar-toggler navbar-toggler-right"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navb"
+        aria-expanded="true"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div id="navb" class="navbar-collapse collapse hide">
+        <ul class="nav navbar-nav ml-auto">
+          <nav class="stroke">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="./login.html"
+                target="_blank"
+                style="color: white; font-size: 17px"
+                ><span class="fas fa-sign-in-alt"></span> Logout</a
+              >
+            </li>
+          </nav>
+        </ul>
+      </div>
+       </nav>
+       <!-- navbar /-->
+    
+    <div class="container-fluid"><br><br>
+  <div class="row">
+    <div class="col-3 bg-light">
+      <div style="background: linear-gradient(150deg, #9217B5, #79E6F2 95%);">
+        
+    <img src="{{ user.get_profile_image_url(300) }}" alt="Avatar" class="avatar"><br><br>
+        <div class="card-body">
+      <p class="p1">
+        {{ user.fname + " " + user.lname }}
+      </p>
+      <p class="p2">
+        {{ user.faculty.designation }}
+      </p>
+      <p class="p3">
+        {{ user.faculty.department }}
+      </p>
+      <br>
+      <a style="text-decoration:none;" href="edit-profile.html" >
+       <button type="button" class="block">Edit Profile</button>
+    </a>
+        </div>
+      </div>
+    </div>
+                                                                                                                                                
+    <!-- Centre details -->
+                                                                                                                                                
+    <div class="col-6 bg-light">
+    <div class="row">
+      <div class="col" style="text-align:center;">
+      <h4>
+<!--         <button type="button" class="centre" onclick = "showPersonal()">Personal Info</button> -->
+        <button type="button" class="btn btn-link text-dark" onclick = "showPersonal()" style="font-size:22px; font-family:verdana">Personal Info</button>
+      </h4>
+      </div>
+      <div class="col" style="text-align:center;">
+        <h4>
+<!--           <button type="button" class="centre" onclick = "showPaper()">Publications</button> -->
+          <button type="button" class="btn btn-link text-dark" onclick = "showPaper()" style="font-size:22px; font-family:verdana">My Publications</button>
+        </h4>
+      </div>
+    </div>
+      <!-- Page 1 -->
+      <div id="personal" style="display:block; padding: 0px 30px;">
+        <!-- About me -->
+        <p>
+          <hr>
+          <h2>
+            About Me
+        </h2>
+        <p>
+            {{ user.faculty.about_me }}
+        </p>
+        </p>
+      <!-- About Me -->
+      <!--Work Experience -->
+      <p>
+        <h2>
+          Work Experience
+      </h2>
+      <p>
+        {{ user.faculty.work_exp }}
+      </p>
+      </p>
+      <!-- Work Experience -->
+    <table>
+    <!-- LinkedIn -->
+      <tr>
+      <td><i class="fab fa-linkedin"></i></td>
+      <td>{{ user.faculty.linkedin }}</td>
+    </tr>
+    <!--LinkedIn -->
+    <!-- Github -->
+    <tr>
+      <td><i class="fab fa-github"></i></td>
+      <td>{{ user.faculty.github }}</td>
+    </tr>
+    
+    <!-- Github -->
+  
+    </table>
+    </div>
+      <!-- Page 1 -->
+      
+      <!--Page 2 -->
+      <div id="publish" style="display:none; padding:0px 30px;">
+        {% for paper in user.publications() %}
+            <div>
+                <hr>
+                <h2>
+                    Abstract
+                </h2>
+                <p>
+                    {{ paper.abstract }}    
+                </p>
+            </div>
+          <div>
+                <h4>
+                    Link to the paper
+                </h4>
+                <p>
+                    {{ paper.paper_file }}  
+                </p>
+          </div>
+        {% endfor %}
+
+        <!-- <div>
+          <hr>
+          <h2>
+            Abstract
+          </h2>
+          <p>
+            Nunc fringilla a libero et placerat. In cursus convallis mattis. Maecenas aliquet quis tellus nec fermentum. Suspendisse tortor urna, iaculis sed porta interdum, accumsan eget odio. Donec in congue est. Donec consectetur justo nec nisl feugiat, quis elementum libero tempor. Vivamus vitae semper erat, quis dignissim leo. Phasellus at tellus sagittis, vestibulum orci in, auctor sem. Pellentesque pellentesque efficitur ligula, quis fermentum felis ultrices non. Aenean aliquet quam sapien, in scelerisque orci rhoncus non. Suspendisse facilisis a elit quis condimentum. Mauris sed dictum urna. Morbi laoreet nisl turpis, vel sagittis sapien accumsan vitae. Proin nec nisi eu velit egestas porta.
+          </p>
+        </div>
+        <div>
+          <h4>
+            Link to the paper
+          </h4>
+          <p>
+            Link from database
+          </p>
+        </div> -->
+      </div>
+      <!--Page 2 -->
+    </div>
+    
+    <!--Centre details -->
+    
+    <div class="col-3 bg-light" style="padding-left:40px;"><br>
+      <h2 style="font-family:tahoma">
+        <i class="fas fa-id-badge"></i> Global ID
+      </h2>
+      <p>
+        Id from Database
+      </p><br>
+      <h2 style="font-family:tahoma">
+        <i class="fas fa-envelope"></i> Email
+      </h2>
+      <p>
+        {{ user.email }}
+      </p><br>
+      <h2 style="font-family:tahoma">
+        <i class="fas fa-phone"></i> Phone
+      </h2>
+      <p>
+        {{ user.faculty.phone_number }}
+      </p><br>
+      <h2 style="font-family:tahoma">
+        <i class="fas fa-map-marker-alt"></i> Address
+      </h2>
+      <p>
+        {{ user.faculty.address }}
+      </p>
+    </div>
+  </div>
+</div>
+    
+    <!-- <footer> -->
+    <div class="container-fluid dark">
+      <center>
+        <h6 style="padding: 10px">
+          <footer>&copy; Copyright 2022. All rights reserved.</footer>
+        </h6>
+      </center>
+    </div>
+    <!-- </footer> -->
+   
+  </body>
+</html>
+
+<script type="text/javascript">
+        function showPaper(){
+             document.getElementById("personal").style.display= "none";
+             document.getElementById("publish").style.display = "block";              
+        } 
+        function showPersonal(){
+             document.getElementById("personal").style.display= "block";
+             document.getElementById("publish").style.display = "none";              
+        } 
+     </script>
+
+      
+   

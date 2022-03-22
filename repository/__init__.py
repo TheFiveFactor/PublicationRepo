@@ -62,6 +62,7 @@ admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstr
 admin.add_view(ModelView(models.Role, db.session))
 admin.add_view(ModelView(models.Institution, db.session))
 admin.add_view(ModelView(models.User, db.session))
+admin.add_view(ModelView(models.Faculty, db.session))
 admin.add_view(ModelView(models.Department, db.session))
 admin.add_view(ModelView(models.DepartmentAreas, db.session))
 admin.add_view(ModelView(models.PaperType, db.session))
