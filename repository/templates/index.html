@@ -1,90 +1,87 @@
-{% extends "base.html" %}
-{% block content %}
-<style>
-    .bg-dark-container {
-        background-color: #343a40;
-    }
-</style>
-    <!-- <img src="{# current_user.get_profile_image_url() #}" alt="ImageText"> -->
-    <!-- bg-video /-->
-    <div class="bg-dark-container">
-        <video autoplay muted loop width="100%">
-            <source
-                src="https://cdn.glitch.global/cb0fb47f-a8c0-49d2-8f79-c86bc78b762a/home.mp4?v=1644942575389"
-                type="video/mp4"
-            />
-        </video>
-        <!-- bg-video /-->
+{% extends "base2.html" %} {% block content %}
+<!-- bg-video /-->
+<video autoplay muted loop width="100%">
+    <source
+        src="{{ url_for('static', filename='videos/bg.mp4') }}"
+        type="video/mp4"
+    />
+</video>
+<!-- bg-video /-->
 
-        <!-- About -->
-
-        <div class="grid-container">
-            <div class="circle">About Us!</div>
-            <div class="content" style="font-size: 25px">
-                Welcome to Faculty Publication Repository. "An electronic repository is considered to
-                preserve, host, manage and facilitate the sharing of intellectual productivity of
-                institutional faculty". This Institutional Repository has been created to collect, preserve
-                and distribute the scholarly output of Amrita Vishwa Vidyapeetham, Coimbatore. This will
-                work as an important tool to facilitate scholarly communication and preserve the institution
-                knowledge. Institutional repositories enable researchers to self-archive their research
-                output and can improve the visibility, usage and impact of research conducted at an
-                institution.
-            </div>
-        </div>
-
-        <!-- About -->
-
-        <!-- Services -->
-
-        <div class="grid-container-opp">
-            <div class="content" style="font-size: 25px">
-                This repository facilitates professors to upload their research papers, journals, datasets
-                and about the conefrences attended. The students can search and view papers accordingly. The
-                students can also download papers for their future refernces. Faculty can build thier
-                profile and share about them.
-            </div>
-            <div class="circle">Services!</div>
-        </div>
+<div class="container-fluid about">
+    <div class="container">
         <br />
-
-        <!--  services -->
-    </div>
-
-    <!--Contact Us -->
-
-    <div id="contact" class="container">
-        <h3 class="text-center" style="font-family: san-serif">Contact Us</h3>
-        <p class="text-center">
-            <em>Your comments would be highly appreciated ! &#128512;</em>
+        <h1 class="display-4">About Us!</h1>
+        <br />
+        <p class="lead">
+            Welcome to Faculty Publication Repository. "An electronic repository
+            is considered to preserve, host, manage and facilitate the sharing
+            of intellectual productivity of institutional faculty". This
+            Institutional Repository has been created to collect, preserve and
+            distribute the scholarly output of Amrita Vishwa Vidyapeetham,
+            Coimbatore. This will work as an important tool to facilitate
+            scholarly communication and preserve the institution knowledge.
+            Institutional repositories enable researchers to self-archive their
+            research output and can improve the visibility, usage and impact of
+            research conducted at an institution.
         </p>
-
         <br />
-        <div class="row">
-            <div class="col-md-4">
-                <p>Queries? Drop a note.</p>
+    </div>
+</div>
 
-                <p>
-                    <span class="glyphicon glyphicon-map-marker"></span
-                    ><i class="fas">&#xf3c5;</i> Ettimadai, Coimbatore
-                </p>
+<div class="container-fluid services">
+    <div class="container">
+        <br />
+        <h1 class="display-4">Services</h1>
+        <br />
+        <p class="lead">
+            This repository facilitates professors to upload their research
+            papers, journals, datasets and about the conferences attended. The
+            students can search and view papers accordingly. The students can
+            also download papers for their future references. Faculty can build
+            their profile and share about them.
+        </p>
+        <br />
+    </div>
+</div>
 
-                <p>
-                    <i class="fa">&#xf0e0;</i> Email:
-                    <a href="mailto: facultypublicationrepo@gmail.com">
-                        facultypublicationrepo@gmail.com</a
-                    >
-                </p>
+<!--Contact Us -->
 
-                <button
-                    type="button"
-                    class="btn btn-outline-dark"
-                    style="font-size: 18px"
-                    onclick="window.open('https://github.com/TheFiveFactor');"
+<div id="contact" class="container">
+    <br />
+    <h3 class="text-center" style="font-family: san-serif">Contact Us</h3>
+    <p class="text-center">
+        <em>Your comments would be highly appreciated ! &#128512;</em>
+    </p>
+
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <p>Queries? Drop a note.</p>
+
+            <p>
+                <span class="glyphicon glyphicon-map-marker"></span
+                ><i class="fas">&#xf3c5;</i> Ettimadai, Coimbatore
+            </p>
+
+            <p>
+                <i class="fa">&#xf0e0;</i> Email:
+                <a href="mailto: facultypublicationrepo@gmail.com">
+                    facultypublicationrepo@gmail.com</a
                 >
-                    <i class="fab fa-github"></i> GitHub
-                </button>
-            </div>
-            <div class="col-md-8">
+            </p>
+
+            <button
+                type="button"
+                class="btn btn-outline-dark"
+                style="font-size: 18px"
+                onclick="window.open('https://github.com/TheFiveFactor');"
+            >
+                <i class="fab fa-github"></i> GitHub
+            </button>
+        </div>
+        <div class="col-md-8">
+            <form action="mailto:facultypublicationrepo@gmail.com" method="post" enctype="text/plain">
                 <div class="row">
                     <div class="col-sm-6 form-group">
                         <input
@@ -117,26 +114,43 @@
                 <br />
                 <div class="row">
                     <div class="col-md-12 form-group">
-                        <button type="button" class="btn btn-outline-dark" style="font-size: 18px">
+                        <button
+                            type="submit"
+                            class="btn btn-success"
+                            style="font-size: 18px"
+                        >
                             <i class="fas fa-paper-plane"></i> Send
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
-    <br /><br />
+</div>
+<br /><br />
 
-    <!--Contact Us -->
+<!--Contact Us -->
 
-    <!-- <footer> -->
-    <div class="w3-container w3-black">
-        <center>
-            <h6 style="padding: 10px">
-                <footer>&copy; Copyright 2022. All rights reserved.</footer>
-            </h6>
-        </center>
-    </div>
-    <!-- </footer> -->
+<!-- <footer> -->
+<div class="container-fluid dark">
+    <center>
+        <h6 style="padding: 10px; margin-bottom: 0.05rem">
+            <footer>&copy; Copyright 2022. All rights reserved.</footer>
+        </h6>
+    </center>
+</div>
+<!-- </footer> -->
 
+<!-- <script>
+    $(document).ready(function () {
+        $(window).scroll(function () {
+            var scroll = $(window).scrollTop();
+            if (scroll > 1000) {
+                $(".black").css("background", "white");
+            } else {
+                $(".black").css("background", "white");
+            }
+        });
+    });
+</script> -->
 {% endblock %}

@@ -92,12 +92,12 @@ def login():
     form = LoginForm(request.form)
     reg_form = RegistrationForm()
     if request.method=="POST" and form.validate_on_submit():
-        print("arrive")
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'danger')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember.data)
+        flash('Sucessfully logged in', 'success')
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')

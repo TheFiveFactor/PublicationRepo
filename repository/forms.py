@@ -91,7 +91,7 @@ def getDepartmentAreaChoices():
 class PublishPaperForm(FlaskForm):
     title = StringField('Tile', validators=[DataRequired(), Length(min=1, max=255)])
     abstract = TextAreaField('Abstract', widget=TextArea(), validators=[DataRequired()])
-    paper_type = SelectField('You are a',
+    paper_type = SelectField('Paper Type',
         choices=[(paper_type.id, paper_type.name) for paper_type in PaperType.query.all()], validators=[DataRequired()])
     department_area = SelectField('Department Area Collection',
         choices=[(str(department_area.id), department_area.name) for department_area in DepartmentAreas.query.all()], validators=[DataRequired()])
@@ -100,5 +100,6 @@ class PublishPaperForm(FlaskForm):
     publisher = StringField('Publisher', validators=[DataRequired(), Length(min=1, max=255)])
     published_year = IntegerField('Publishing Year', validators=[DataRequired(), NumberRange(max=datetime.utcnow().year)])
     access = SelectField('Access', choices=PaperAccessEnum.fetch_fields(), validators=[DataRequired()])
-    paper_file = FileField('Upload file as pdf', validators=[FileAllowed(['pdf'])])
+    paper_file = FileField('Upload file', validators=[FileAllowed(['pdf', 'csv', 'tsv', 'json', 'xlsx'])])
     submit = SubmitField('Publish Paper')
+
