@@ -94,10 +94,16 @@ class User(UserMixin, db.Model):
             user_bg = bg_and_color_list[self.id % bg_lis_len]
             return f'https://ui-avatars.com/api/?name={self.fname}+{self.lname}' + f'&background={user_bg[0]}&color={user_bg[1]}&size={img_size}'
 
-    
+
     def publications(self):
         return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id)).all()
-    
+
+    def pending_publications(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == 3), PublishPaper.is_paper_authorized==None).all()
+
+    def authorized_publications(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == 3), PublishPaper.is_paper_authorized==True).all()
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -197,7 +203,7 @@ class Faculty(db.Model):
     department = db.Column(db.String(100), nullable=False)
     linkedin = db.Column(db.String(150), nullable=True)
     github = db.Column(db.String(150), nullable=True)
-    phone_number = db.Column(db.String(20), nullable = True) 
+    phone_number = db.Column(db.String(20), nullable = True)
     address = db.Column(db.String(100), nullable = True)
     work_exp = db.Column(db.String(255), nullable = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

@@ -59,28 +59,36 @@
                         {{ user.faculty.department }}
                     </p>
                     <br>
-                    <a style="text-decoration:none;" href="{{ url_for('edit_profile') }}" >
-                        <button type="button" class="block">Edit Profile</button>
-                    </a>
+                    {% if current_user.is_authenticated and current_user.id == user.id %}
+                        <a style="text-decoration:none;" href="{{ url_for('edit_profile') }}" >
+                            <button type="button" class="block">Edit Profile</button>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- Centre details -->
 
-        <div class="col-6 bg-light">
+        <div class="col-6 bg-light border-right border-left">
             <div class="row">
                 <div class="col" style="text-align:center; background-color: #bbb;" id="personal-tab">
-                    <h4>
+                    <h5>
                         <!-- <button type="button" class="centre" onclick = "showPersonal()">Personal Info</button> -->
                         <button type="button" class="btn btn-link text-dark" onclick = "showPersonal()" style="font-size:22px; font-family:verdana;">Personal Info</button>
-                    </h4>
+                    </h5>
                 </div>
                 <div class="col" style="text-align:center;" id="publish-tab">
-                    <h4>
+                    <h5>
                     <!-- <button type="button" class="centre" onclick = "showPaper()">Publications</button> -->
                     <button type="button" class="btn btn-link text-dark" onclick = "showPaper()" style="font-size:22px; font-family:verdana">My Publications</button>
-                    </h4>
+                    </h5>
+                </div>
+                <div class="col" style="text-align:center;" id="pending-tab">
+                    <h5>
+                    <!-- <button type="button" class="centre" onclick = "showPaper()">Publications</button> -->
+                    <button type="button" class="btn btn-link text-dark" onclick = "showPending()" style="font-size:22px; font-family:verdana">Pending reviews</button>
+                    </h5>
                 </div>
             </div>
 
@@ -101,6 +109,13 @@
                     <p>{{ user.faculty.work_exp }}</p>
                 </p>
                 <!-- Work Experience -->
+
+                <!-- Currently Working Papers -->
+                <p>
+                    <h2>Currently Working Papers</h2>
+                    <p>-</p>
+                </p>
+                <!-- Currently Working Papers -->
 
                 <table>
                     <!-- LinkedIn -->
@@ -123,7 +138,23 @@
 
             <!--Page 2 -->
             <div id="publish" style="display:none; padding:0px 30px;">
-                {% for paper in user.publications() %}
+                {% for paper in user.authorized_publications() %}
+                    <div>
+                        <hr>
+                        <h2>Abstract</h2>
+                        <p>{{ paper.abstract }}</p>
+                    </div>
+                    <div>
+                        <h6>Link to the paper</h6>
+                        <p>{{ paper.paper_file }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <!--Page 2 -->
+
+            <!--Page 3 -->
+            <div id="pending" style="display:none; padding:0px 30px;">
+                {% for paper in user.pending_publications() %}
                     <div>
                         <hr>
                         <h2>Abstract</h2>
@@ -137,7 +168,7 @@
 
 
             </div>
-            <!--Page 2 -->
+            <!--Page 3 -->
         </div>
 
         <!--Centre details -->
@@ -175,17 +206,29 @@
 </div>
 
 <script type="text/javascript">
-    function showPaper(obj){
+    function showPaper(){
         document.getElementById("personal").style.display= "none";
         $('#personal-tab').css( "background-color", "");
+        document.getElementById("pending").style.display= "none";
+        $('#pending-tab').css( "background-color", "");
         document.getElementById("publish").style.display = "block";
         $('#publish-tab').css( "background-color", "#bbb");
     }
-    function showPersonal(obj){
+    function showPersonal(){
         document.getElementById("personal").style.display= "block";
         $('#personal-tab').css( "background-color", "#bbb");
         document.getElementById("publish").style.display = "none";
         $('#publish-tab').css( "background-color", "");
+        document.getElementById("pending").style.display= "none";
+        $('#pending-tab').css( "background-color", "");
+    }
+    function showPending(){
+        document.getElementById("personal").style.display= "none";
+        $('#personal-tab').css( "background-color", "");
+        document.getElementById("publish").style.display = "none";
+        $('#publish-tab').css( "background-color", "");
+        document.getElementById("pending").style.display= "block";
+        $('#pending-tab').css( "background-color", "#bbb");
     }
 </script>
 

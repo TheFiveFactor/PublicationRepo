@@ -5,7 +5,7 @@ from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from repository.models import Institution, PaperType, PublishPaper, Role, User, Department
+from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department
 from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
     RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm
 
@@ -227,7 +227,8 @@ def publish_paper():
     departments = Department.query.all()
     form = PublishPaperForm(request.form)
     if request.method == "POST" and form.validate():
-        print(request.form)
+        # print(request.form)
+        # print(request.files)
         publish_paper_modal = PublishPaper(title=form.title.data,
             abstract=form.abstract.data, paper_type_id=int(form.paper_type.data),
             department_area_id=int(form.department_area.data), publisher=form.publisher.data)
@@ -237,6 +238,11 @@ def publish_paper():
                 publish_paper_modal.authors.append(author)
 
         if 'paper_file' in request.files and request.files['paper_file'].filename != '':
+            _, f_ext = os.path.splitext(request.files['paper_file'].filename)
+            # print(f_ext[1:], str(PaperType.query.get(int(form.paper_type.data))).name.lower())
+            if PaperType.query.get(int(form.paper_type.data)).name.lower() == 'dataset' and (f_ext[1:] not in ['csv', 'tsv', 'json', 'xlsx']):
+                flash("For Dataset extension should be in 'csv', 'tsv', 'json', 'xlsx'", 'danger')
+                return redirect(url_for('publish_paper'))
             paper_file = save_publish_paper_pdf(request.files['paper_file'])
             publish_paper_modal.paper_file = paper_file
 
@@ -249,4 +255,7 @@ def publish_paper():
 @app.route('/faculty/<int:id>')
 def faculty_profile(id):
     user = User.query.get_or_404(id)
+    if Role.query.get(int(user.role_id)).name.lower() not in ['faculty', 'admin', 'panel']:
+        flash('This page is allowed only for faculties', 'warning')
+        return redirect(url_for('index'))
     return render_template('faculty_profile.html', user=user)
