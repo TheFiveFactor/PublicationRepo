@@ -325,6 +325,34 @@ def faculty_edit_profile(id):
     # fedit_form = EditFacultyProfileForm()
     return render_template('faculty_edit_profile.html', title='Faculty Edit Profile', fedit_form=fedit_form, image_file=image_file)
 
+@app.route('/faculty/update_current_working_paper', methods=['POST'])
+@login_required
+def update_current_working_paper():
+    # print(request.form.get('currently_working'))
+    currently_working = request.form.get('currently_working')
+    if current_user.faculty:
+        current_user.faculty.currently_working = currently_working
+    else:
+        f = Faculty(currently_working=currently_working, user_id=current_user.id)
+        db.session.add(f)
+    db.session.commit()
+
+    return redirect(url_for('faculty_profile', id=current_user.id))
+
+@app.route('/faculty/update_conference_attended', methods=['POST'])
+@login_required
+def update_conference_attended():
+    # print(request.form.get('currently_working'))
+    conference_attended = request.form.get('conference_attended')
+    if current_user.faculty:
+        current_user.faculty.conference_attended = conference_attended
+    else:
+        f = Faculty(conference_attended=conference_attended, user_id=current_user.id)
+        db.session.add(f)
+    db.session.commit()
+
+    return redirect(url_for('faculty_profile', id=current_user.id))
+
 @app.route('/faculty/<int:id>')
 def faculty_profile(id):
     user = User.query.get_or_404(id)

@@ -1,5 +1,6 @@
 {% extends "base2.html" %}
 {% block content %}
+<script src="https://cdn.jsdelivr.net/remarkable/1.7.1/remarkable.min.js"></script>
 <style>
     .avatar {
         /* vertical-align: middle; */
@@ -37,6 +38,9 @@
         background-color:#918E8E;
         color: black;
         text-decoration: none;
+    }
+    .fa-edit-btn:hover {
+        cursor: pointer;
     }
 </style>
 
@@ -112,11 +116,97 @@
 
                 <!-- Currently Working Papers -->
                 <p>
-                    <h2>Currently Working Papers</h2>
-                    <p>-</p>
+                    <h2>Currently Working Papers {% if current_user.is_authenticated and current_user.id == user.id %}<span class="fa-edit-btn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-edit"></i></span>{% endif %}</h2>
+                    {% if current_user.faculty and current_user.faculty.currently_working %}
+                        <p id="current-working-content">{{ current_user.faculty.currently_working }}</p>
+                    {% else %}
+                        <p>-</p>
+                    {% endif %}
+
                 </p>
                 <!-- Currently Working Papers -->
 
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Enter Currently Working Papers</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ url_for('update_current_working_paper') }}" method="post">
+                                    <label for="currently_working">Supports MARKDOWN</label>
+                                    <textarea name="currently_working" id="currently_working" cols="30" rows="3" class="form-control"></textarea>
+                                    <br>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conference Attended -->
+                <p>
+                    <h2>Conference Attended {% if current_user.is_authenticated and current_user.id == user.id %}<span class="fa-edit-btn" data-toggle="modal" data-target="#exampleModal1"><i class="fas fa-edit"></i></span>{% endif %}</h2>
+                    {% if current_user.faculty and current_user.faculty.conference_attended %}
+                        <p id="conference-attended-content">{{ current_user.faculty.conference_attended }}</p>
+                    {% else %}
+                        <p>-</p>
+                    {% endif %}
+
+                </p>
+                <!-- Conference Attended -->
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Enter Conference Attended</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ url_for('update_conference_attended') }}" method="post">
+                                    <label for="update_conference_attended">Supports MARKDOWN</label>
+                                    <textarea name="conference_attended" id="update_conference_attended" cols="30" rows="3" class="form-control"></textarea>
+                                    <br>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <hr>
                 <table>
                     <!-- LinkedIn -->
                     <tr>
@@ -240,6 +330,19 @@
     }
 </script>
 
+<script>
+    var md = new Remarkable();
 
+    // $("#current-working-content")
+    $(window).ready(function() {
+        let wCont = $("#current-working-content").html();
+        $("#current-working-content").html(md.render(wCont));
+
+        let confCont = $("#conference-attended-content").html();
+        $("#conference-attended-content").html(md.render(confCont));
+    });
+
+    // $('conference-attended-content')
+</script>
 
 {% endblock %}
