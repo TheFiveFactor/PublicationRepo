@@ -2,7 +2,7 @@
 {% block content %}
 <style>
     .avatar {
-        vertical-align: middle;
+        /* vertical-align: middle; */
         width: 300px;
         height: 300px;
         border-radius: 52%;
@@ -45,7 +45,7 @@
     <br><br>
     <div class="row">
         <div class="col-3 bg-light">
-            <div style="/*background: linear-gradient(150deg, #9217B5, #79E6F2 95%);*/">
+            <div>
 
                 <img src="{{ user.get_profile_image_url(300) }}" alt="Avatar" class="avatar"><br><br>
                 <div class="card-body">
@@ -60,7 +60,7 @@
                     </p>
                     <br>
                     {% if current_user.is_authenticated and current_user.id == user.id %}
-                        <a style="text-decoration:none;" href="{{ url_for('edit_profile') }}" >
+                        <a style="text-decoration:none;" href="{{ url_for('faculty_edit_profile', id=user.id) }}" >
                             <button type="button" class="block">Edit Profile</button>
                         </a>
                     {% endif %}
@@ -87,7 +87,7 @@
                 <div class="col" style="text-align:center;" id="pending-tab">
                     <h5>
                     <!-- <button type="button" class="centre" onclick = "showPaper()">Publications</button> -->
-                    <button type="button" class="btn btn-link text-dark" onclick = "showPending()" style="font-size:22px; font-family:verdana">Pending reviews</button>
+                    <button type="button" class="btn btn-link text-dark" onclick = "showPending()" style="font-size:22px; font-family:verdana">Pending Approval</button>
                     </h5>
                 </div>
             </div>
@@ -121,14 +121,22 @@
                     <!-- LinkedIn -->
                     <tr>
                         <td><i class="fab fa-linkedin"></i></td>
+                        {% if user.faculty.linkedin %}
                         <td><a href="{{ user.faculty.linkedin }}">Linked.in</a></td>
+                        {% else %}
+                        <td>-</td>
+                        {% endif %}
                     </tr>
                     <!--LinkedIn -->
 
                     <!-- Github -->
                     <tr>
                         <td><i class="fab fa-github"></i></td>
-                        <td><a href="{{ user.faculty.github }}">GitHub</a></td>
+                        {% if user.faculty.github %}
+                            <td><a href="{{ user.faculty.github }}">Linked.in</a></td>
+                        {% else %}
+                            <td>-</td>
+                        {% endif %}
                     </tr>
                     <!-- Github -->
 
@@ -197,13 +205,13 @@
 </div>
 
 <!-- <footer> -->
-<div class="container-fluid dark">
+<!-- <div class="container-fluid dark">
     <center>
-        <h6 style="padding: 10px; margin-bottom: 0.05rem;">
+        <h6 style="padding: 10px; margin-bottom: 0.05rem">
             <footer>&copy; Copyright 2022. All rights reserved.</footer>
         </h6>
     </center>
-</div>
+</div> -->
 
 <script type="text/javascript">
     function showPaper(){

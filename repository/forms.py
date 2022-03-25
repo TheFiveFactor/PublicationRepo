@@ -103,3 +103,37 @@ class PublishPaperForm(FlaskForm):
     paper_file = FileField('Upload file', validators=[FileAllowed(['pdf', 'csv', 'tsv', 'json', 'xlsx'])])
     submit = SubmitField('Publish Paper')
 
+class EditFacultyProfileForm(FlaskForm):
+    fname = StringField('First Name', validators=[DataRequired(), Length(min=1, max=20)])
+    lname = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    # role = SelectField('You are a', choices=[('student', 'Student'), ('faculty', 'Faculty')], validators=[DataRequired()])
+    institution = SelectField('You belong to', \
+        choices=[(institution.id, institution.name) for institution in Institution.query.all()], validators=[DataRequired()])
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
+    address = StringField('Address', validators=[Length(min=1, max=100)])
+    phone_number = StringField('Phone Number', validators=[Length(min=1, max=15)])
+    work_exp = StringField('Work Experience', validators=[DataRequired(), Length(min=1, max=255)])
+    about_me = TextAreaField('Abstract', widget=TextArea(), render_kw={"rows": 5, "cols": 50}, validators=[DataRequired()])
+    designation = StringField('Designation', validators=[DataRequired(), Length(min=1, max=100)])
+    department = StringField('Department', validators=[DataRequired(), Length(min=1, max=100)])
+    github = StringField('GitHub Link', validators=[Length(min=1, max=150)])
+    linkedin = StringField('Linkedin Link', validators=[Length(min=1, max=150)])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('That email is taken. Please choose a different one.')
+
+    def validate_role(self, role):
+        if role.data == 'student':
+            if Institution.query.filter_by(student_email_server=self.email.data.split('@')[1]).first() is None:
+                raise ValidationError('University email does not exist')

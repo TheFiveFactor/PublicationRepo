@@ -1,5 +1,6 @@
 import secrets, os
 import time
+from turtle import title
 from PIL import Image
 from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request
@@ -7,7 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department
 from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
-    RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm
+    RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm, EditFacultyProfileForm
 
 import smtplib
 from email.message import Message
@@ -251,6 +252,78 @@ def publish_paper():
         flash('Your request has been submitted successfully', 'success')
         return redirect(url_for('publish_paper'))
     return render_template('publish_paper.html',form=form, departments=departments)
+
+@app.route('/faculty/all')
+def all_faculties():
+    page = request.args.get('page', 1, type=int)
+    faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, app.config['FACULTIES_PER_PAGE'], False)
+    # faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, 1, False)
+    return render_template('all_faculties.html', title='All Faculties', faculties=faculties)
+
+@app.route('/faculty/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def faculty_edit_profile(id):
+    if current_user.id != id:
+        flash('You are unauthorized to edit that faculty', 'danger')
+        return redirect(url_for('index'))
+    fedit_form = EditFacultyProfileForm(request.form)
+    if fedit_form.validate_on_submit():
+        current_user.fname = fedit_form.fname.data
+        current_user.lname = fedit_form.lname.data
+        current_user.email = fedit_form.email.data
+        current_user.institution_id = int(fedit_form.institution.data)
+
+        print(request.files)
+
+        if 'picture' in request.files and request.files['picture'].filename != '':
+            print("hi")
+            picture_file = save_profile_picture(request.files['picture'])
+            current_user.profile_image = picture_file
+
+        if current_user.faculty:
+            current_user.faculty.phone_number = fedit_form.phone_number.data
+            current_user.faculty.address = fedit_form.address.data
+            current_user.faculty.work_exp = fedit_form.work_exp.data
+            current_user.faculty.designation = fedit_form.designation.data
+            current_user.faculty.department = fedit_form.department.data
+            current_user.faculty.about_me = fedit_form.about_me.data
+            current_user.faculty.linkedin = fedit_form.linkedin.data
+            current_user.faculty.github = fedit_form.github.data
+        else:
+            newFaculty = Faculty(phone_number=fedit_form.phone_number.data, address=fedit_form.address.data,
+                work_exp=fedit_form.work_exp.data, designation=fedit_form.designation.data, department=fedit_form.department.data,
+                about_me=fedit_form.about_me.data, user_id=current_user.id, linkedin=fedit_form.linkedin.data,
+                github=fedit_form.github.data)
+
+            db.session.add(newFaculty)
+
+        db.session.commit()
+        flash('Your account has been Updated!', 'success')
+        return redirect(url_for('faculty_profile', id=current_user.id))
+    elif request.method == 'GET':
+        fedit_form.fname.data = current_user.fname
+        fedit_form.lname.data = current_user.lname
+        fedit_form.email.data = current_user.email
+        # form.role.data = current_user.role.name
+        fedit_form.institution.data = current_user.institution
+
+        if current_user.faculty:
+            fedit_form.phone_number.data = current_user.faculty.phone_number
+            fedit_form.address.data = current_user.faculty.address
+            fedit_form.work_exp.data = current_user.faculty.work_exp
+            fedit_form.designation.data = current_user.faculty.designation
+            fedit_form.department.data = current_user.faculty.department
+            fedit_form.about_me.data = current_user.faculty.about_me
+            fedit_form.github.data = current_user.faculty.github
+            fedit_form.linkedin.data = current_user.faculty.linkedin
+
+    image_file = None
+    if current_user.profile_image:
+        image_file = url_for('static', filename='profile_pics/' + current_user.profile_image)
+
+    # return render_template('edit_profile.html', title='Edit Profile', form=form, image_file=image_file)
+    # fedit_form = EditFacultyProfileForm()
+    return render_template('faculty_edit_profile.html', title='Faculty Edit Profile', fedit_form=fedit_form, image_file=image_file)
 
 @app.route('/faculty/<int:id>')
 def faculty_profile(id):
