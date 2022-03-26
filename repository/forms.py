@@ -89,7 +89,7 @@ def getDepartmentAreaChoices():
     return choices
 
 class PublishPaperForm(FlaskForm):
-    title = StringField('Tile', validators=[DataRequired(), Length(min=1, max=255)])
+    title = StringField('Title', validators=[DataRequired(), Length(min=1, max=255)])
     abstract = TextAreaField('Abstract', widget=TextArea(), validators=[DataRequired()])
     paper_type = SelectField('Paper Type',
         choices=[(paper_type.id, paper_type.name) for paper_type in PaperType.query.all()], validators=[DataRequired()])

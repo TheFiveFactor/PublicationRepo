@@ -21,7 +21,7 @@
         {% for faculty in faculties.items %}
             <div class="col-md-3">
                 <div class="card">
-                    <img class="card-img-top" src="{{ faculty.get_profile_image_url() }}" style="min-height: 318px;" alt="">
+                    <img class="card-img-top" src="{{ faculty.get_profile_image_url() }}" style="min-height: 318px; max-height: 318px;" alt="">
                     <div class="card-body">
                         <h5 class="card-title">{{ faculty.fname + " " + faculty.lname }}</h5>
                         {% if faculty.faculty.about_me %}
