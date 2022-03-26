@@ -226,7 +226,7 @@
                                 </div>
                                 <!-- <input type="text" class="form-control" value="Department" placeholder="Dep" /> -->
                                 {% if fedit_form.linkedin.errors %}
-                                    {{ fedit_form.linkedin(class="form-control", placeholder='Department', style="border-color: red;")|safe }}
+                                    {{ fedit_form.linkedin(class="form-control", placeholder='https://linkedin.com/username', style="border-color: red;")|safe }}
                                     <div class="invalid-feedback">
                                         {% for error in fedit_form.linkedin.errors %}
                                             <span style="color: red;">{{ error }}</span>

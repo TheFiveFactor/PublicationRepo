@@ -111,14 +111,14 @@ class EditFacultyProfileForm(FlaskForm):
     institution = SelectField('You belong to', \
         choices=[(institution.id, institution.name) for institution in Institution.query.all()], validators=[DataRequired()])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
-    address = StringField('Address', validators=[Length(min=1, max=100)])
-    phone_number = StringField('Phone Number', validators=[Length(min=1, max=15)])
+    address = StringField('Address', validators=[Length(max=100)])
+    phone_number = StringField('Phone Number', validators=[Length(max=15)])
     work_exp = StringField('Work Experience', validators=[DataRequired(), Length(min=1, max=255)])
     about_me = TextAreaField('Abstract', widget=TextArea(), render_kw={"rows": 5, "cols": 50}, validators=[DataRequired()])
     designation = StringField('Designation', validators=[DataRequired(), Length(min=1, max=100)])
     department = StringField('Department', validators=[DataRequired(), Length(min=1, max=100)])
-    github = StringField('GitHub Link', validators=[Length(min=1, max=150)])
-    linkedin = StringField('Linkedin Link', validators=[Length(min=1, max=150)])
+    github = StringField('GitHub Link', validators=[Length(max=150)])
+    linkedin = StringField('Linkedin Link', validators=[Length(max=150)])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
