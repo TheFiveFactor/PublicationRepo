@@ -53,6 +53,7 @@ def send_reset_email(user):
     s = smtplib.SMTP("smtp.gmail.com", 587)
     msg.set_payload(message)
     s.starttls()
+    # print(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
     s.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
     s.sendmail(msg['From'], [msg['To']], msg.as_string())
     s.quit()
