@@ -10,12 +10,13 @@
                         width="90"
                     /> -->
                     {% if image_file %}
-                        <img class="rounded-circle mt-5" id="live-img-file" width="90" src="{{ image_file }}">
+                        <img class="rounded-circle mt-5" id="live-img-file" width="120" height="120" src="{{ image_file }}">
                     {% else %}
                         <img
                             class="rounded-circle mt-5"
                             src="https://cdn.glitch.global/cb0fb47f-a8c0-49d2-8f79-c86bc78b762a/img_avatar.png?v=1647488984248"
-                            width="90"
+                            height="120"
+                            width="120"
                             id="live-img-file"
                         />
                     {% endif %}

@@ -12,4 +12,4 @@ class Config(object):
     # MAIL_USE_SSL = False
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    FACULTIES_PER_PAGE = 2
+    FACULTIES_PER_PAGE = 12

@@ -99,10 +99,10 @@ class User(UserMixin, db.Model):
         return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id)).all()
 
     def pending_publications(self):
-        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == 3), PublishPaper.is_paper_authorized==None).all()
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id), PublishPaper.is_paper_authorized==None).all()
 
     def authorized_publications(self):
-        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == 3), PublishPaper.is_paper_authorized==True).all()
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id), PublishPaper.is_paper_authorized==True).all()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
