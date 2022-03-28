@@ -1,4 +1,5 @@
 from repository import db, login, app
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_login import UserMixin
@@ -181,7 +182,19 @@ class PublishPaper(db.Model):
 
     def get_paper_file_url(self):
         if self.paper_file:
-            return url_for('static', filename='publish_papers/' + self.paper_file)
+            return url_for('pub_file', paper_id=self.id, filename=self.paper_file)
+
+    def get_paper_name(self):
+        if self.paper_file:
+            return "_".join(self.paper_file.split("-")[1:])
+
+    def get_paper_size(self, unit=None):
+        file_size = os.stat(os.path.join(app.root_path, 'protected', self.paper_file)).st_size
+        if unit == "KB":
+            file_size = str(round(file_size / 1024, 3))
+        elif unit == "MB":
+            file_size = str(round(file_size / (1024 * 1024), 3))
+        return file_size
 
     def __repr__(self):
         return "<PublishPaper: '{}'>".format(self.title[:50] + (self.title[50:] and '..'))

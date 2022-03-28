@@ -1,0 +1,88 @@
+{% extends "base2.html" %}
+{% block content %}
+    <br><br>
+    <div class="container-fluid p-3 bg-secondary text-white">
+        <h2 style="font-family: verdana">Faculty Publication Repository</h2>
+    </div>
+    <br /><br />
+
+    <div class="container p-2 my-2">
+        <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Title:</th>
+                <td>
+                    {{ paper.title }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Abstract:</th>
+                <td>
+                    {{ paper.abstract }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Authors:</th>
+                <td>
+                    <ul style="list-style-type: none;">
+                        {% for author in paper.authors %}
+                            {% if author.faculty %}
+                                <li><a href="{{ url_for('faculty_profile', id=author.id) }}">{{ author.fname + " " + author.lname }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Published Year:</th>
+                <td>{{ paper.published_year }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Appears in Department:</th>
+                <td>{{ paper.department_area.department.name }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Publisher:</th>
+                <td>{{ paper.publisher }}</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+
+    <div class="container p-4 my-3 border">
+        <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th colspan="4">Files in this system</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Files</b></td>
+                <td><b>size</b></td>
+                <td><b>format</b></td>
+            </tr>
+            {% if paper.paper_file %}
+                <tr>
+                    <td>
+                        <a href="{{ paper.get_paper_file_url() }}" >{{ paper.get_paper_name() }}</a>
+                    </td>
+                    <td>{{ paper.get_paper_size(unit="KB") }}KB</td>
+                    <td>{{ paper.paper_file.split(".")[-1] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" align="center"><b>No files in this system</b></td>
+                </tr>
+            {% endif %}
+        </tbody>
+        </table>
+    </div>
+
+    <div class="container p-1 my-1">
+        <p class="submitFormHelp alert alert-info">
+        Items in Faculty Publication Repository are protected by copyright, with
+        all rights reserved, unless otherwise indicated.
+        </p>
+    </div>
+{% endblock content %}

@@ -3,10 +3,10 @@ import time
 from turtle import title
 from PIL import Image
 from repository import app, db, github
-from flask import url_for, render_template, redirect, flash, request
+from flask import url_for, render_template, redirect, flash, request, send_from_directory
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department
+from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum
 from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
     RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm, EditFacultyProfileForm
 
@@ -32,7 +32,8 @@ def save_publish_paper_pdf(form_paper):
     f_name, f_ext = os.path.splitext(form_paper.filename)
     new_fname = "_".join(f_name.split(" "))
     paper_fn = random_hex + "-" + new_fname + f_ext
-    paper_path = os.path.join(app.root_path, 'static/publish_papers', paper_fn)
+    # paper_path = os.path.join(app.root_path, 'static/publish_papers', paper_fn)
+    paper_path = os.path.join(app.root_path, 'protected', paper_fn)
     form_paper.save(paper_path)
     return paper_fn
 
@@ -360,3 +361,36 @@ def faculty_profile(id):
         flash('This page is allowed only for faculties', 'warning')
         return redirect(url_for('index'))
     return render_template('faculty_profile.html', user=user)
+
+@app.route('/paper/<int:id>')
+def view_paper(id):
+    paper = PublishPaper.query.get_or_404(id)
+    return render_template('view_paper.html', title='View Paper', paper=paper)
+
+@app.route('/protected/<int:paper_id>/<path:filename>')
+def pub_file(paper_id, filename):
+    paper = PublishPaper.query.get_or_404(paper_id)
+    if paper.access == PaperAccessEnum.ALLOW_ALL:
+        return send_from_directory(
+            os.path.join(app.root_path, 'protected'),
+            filename
+        )
+    elif paper.access == PaperAccessEnum.ONLY_YOUR_COLLEGE:
+        author_instituions = [author.institution.name for author in paper.authors]
+        if current_user.is_authenticated:
+            if current_user.role.name != "student" or \
+                (current_user.institution.name in author_instituions):
+                return send_from_directory(
+                    os.path.join(app.root_path, 'protected'),
+                    filename
+                )
+        flash("Authorized only for faculties and their college students", 'warning')
+        return redirect(url_for('view_paper', id=paper.id))
+    else:
+        if current_user.is_authenticated and current_user.role.name in ['faculty', 'admin', 'panel']:
+            return send_from_directory(
+                os.path.join(app.root_path, 'protected'),
+                filename
+            )
+        flash("Authorized only for faculties", 'warning')
+        return redirect(url_for('view_paper', id=paper.id))
