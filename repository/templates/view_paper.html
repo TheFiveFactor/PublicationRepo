@@ -63,6 +63,9 @@
                 <td><b>format</b></td>
             </tr>
             {% if paper.paper_file %}
+                {% if not paper_access %}
+                    <tr><td colspan="3"><span class="badge badge-danger">This is Restricted</span></td></tr>
+                {% endif %}
                 <tr>
                     <td>
                         <a href="{{ paper.get_paper_file_url() }}" >{{ paper.get_paper_name() }}</a>
