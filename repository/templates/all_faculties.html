@@ -17,10 +17,16 @@
 
 <br><br>
 <div class="container-fluid faculty-container">
+    <h2>Filter Authors</h2>
     <form action="{{ url_for('all_faculties') }}" method="get">
         <div class="form-group">
             <label for="author">Author name:</label>
-            <input type="text" name="author" class="form-control">
+            <input type="text" name="author" class="form-control" value="{{ request.args.get('author') or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="university">University:</label>
+            <input type="text" name="university" class="form-control" value="{{ request.args.get('university') or '' }}">
         </div>
 
         <input type="submit" value="Search" class="btn btn-info">

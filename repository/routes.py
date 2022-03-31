@@ -259,7 +259,7 @@ def publish_paper():
 @app.route('/faculty/all')
 def all_faculties():
     author_q = request.args.get('author')
-    university_q = request.args.get('univ')
+    university_q = request.args.get('university')
     mode = request.args.get('order')
 
     faculties = []
@@ -272,6 +272,9 @@ def all_faculties():
             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%"))
     else:
         faculties = User.query.join(Role).filter(Role.name=="faculty")
+
+    if university_q:
+        faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))
 
 
     page = request.args.get('page', 1, type=int)
