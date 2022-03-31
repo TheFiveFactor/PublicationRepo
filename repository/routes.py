@@ -365,10 +365,12 @@ def faculty_profile(id):
 @app.route('/paper/<int:id>')
 def view_paper(id):
     paper = PublishPaper.query.get_or_404(id)
+    authors = [author.id for author in paper.authors]
     if not paper.is_paper_authorized:
-        flash("This paper is not authorized yet", "danger")
-        next_page = request.args.get('next') or request.referrer or url_for('index')
-        return redirect(next_page)
+        if not (current_user.is_authenticated and current_user.id in authors):
+            flash("This paper is not authorized yet", "danger")
+            next_page = request.args.get('next') or request.referrer or url_for('index')
+            return redirect(next_page)
     paper_access = paper.access == PaperAccessEnum.ALLOW_ALL
     return render_template('view_paper.html', title='View Paper', paper=paper, paper_access=paper_access)
 
