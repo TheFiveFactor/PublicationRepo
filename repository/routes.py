@@ -12,6 +12,7 @@ from repository.forms import LoginForm, RegistrationForm, EditProfileForm, Chang
 
 import smtplib
 from email.message import Message
+from sqlalchemy import func
 
 # Utils
 def save_profile_picture(form_picture):
@@ -257,8 +258,25 @@ def publish_paper():
 
 @app.route('/faculty/all')
 def all_faculties():
+    author_q = request.args.get('author')
+    university_q = request.args.get('univ')
+    mode = request.args.get('order')
+
+    faculties = []
+
+    if author_q:
+        if mode == 'desc':
+            faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%")).order_by(User.fname.desc())
+            # faculties = User.filter(User.name.like('%' + author_q + '%'))
+        else:
+            faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%"))
+    else:
+        faculties = User.query.join(Role).filter(Role.name=="faculty")
+
+
     page = request.args.get('page', 1, type=int)
-    faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, app.config['FACULTIES_PER_PAGE'], False)
+    faculties = faculties.paginate(page, app.config['FACULTIES_PER_PAGE'], False)
+    # faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, app.config['FACULTIES_PER_PAGE'], False)
     # faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, 1, False)
     return render_template('all_faculties.html', title='All Faculties', faculties=faculties)
 

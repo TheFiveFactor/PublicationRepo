@@ -17,6 +17,14 @@
 
 <br><br>
 <div class="container-fluid faculty-container">
+    <form action="{{ url_for('all_faculties') }}" method="get">
+        <div class="form-group">
+            <label for="author">Author name:</label>
+            <input type="text" name="author" class="form-control">
+        </div>
+
+        <input type="submit" value="Search" class="btn btn-info">
+    </form>
     <div class="row">
         {% for faculty in faculties.items %}
             <div class="col-md-3">
