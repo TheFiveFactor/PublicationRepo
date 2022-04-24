@@ -236,6 +236,7 @@ def publish_paper():
         publish_paper_modal = PublishPaper(title=form.title.data,
             abstract=form.abstract.data, paper_type_id=int(form.paper_type.data),
             department_area_id=int(form.department_area.data), publisher=form.publisher.data)
+        publish_paper_modal.unique_paper_id = PublishPaper.generate_unique_paper_id()
         for author_id in form.authors.data:
             author = User.query.filter_by(id=int(author_id)).first()
             if author:

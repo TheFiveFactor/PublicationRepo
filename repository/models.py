@@ -5,7 +5,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import url_for
-import enum
+import enum, uuid
 
 class PaperAccessEnum(enum.Enum):
     ALLOW_ALL = 'Allow All'
@@ -155,6 +155,7 @@ class PublishPaper(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     abstract = db.Column(db.Text())
+    unique_paper_id = db.Column(db.String(16), unique=True)
     paper_type_id = db.Column(db.Integer, db.ForeignKey('paper_type.id'), nullable=False) # new for publish_paper
     department_area_id = db.Column(db.Integer, db.ForeignKey('department_areas.id'), nullable=False) # new for publish_paper # Appears in Collection
     authors = db.relationship('User', secondary=author_publish_paper, lazy='subquery',
@@ -170,6 +171,14 @@ class PublishPaper(db.Model):
     @staticmethod
     def get_pending_papers():
         return PublishPaper.query.filter_by(is_paper_authorized=None).all()
+    
+    @staticmethod
+    def generate_unique_paper_id():
+        uu = uuid.uuid4().hex[:8]
+        while PublishPaper.query.filter_by(unique_paper_id=uu).first() != None:
+            uu = uuid.uuid4().hex[:8]
+        return uu
+
 
     def authorize_paper(self):
         self.is_paper_authorized = True
