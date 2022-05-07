@@ -423,3 +423,61 @@ def pub_file(paper_id, filename):
             )
         flash("Authorized only for faculties", 'warning')
         return redirect(url_for('view_paper', id=paper.id))
+
+# @app.route('/filter/author')
+# def filter_author():
+#     # user = User.query.get_or_404(id)
+#     # if Role.query.get(int(user.role_id)).name.lower() not in ['faculty', 'admin', 'panel']:
+#     #     flash('This page is allowed only for faculties', 'warning')
+#     #     return redirect(url_for('index'))
+#     author_q = request.args.get('author')
+#     university_q = request.args.get('university')
+#     mode = request.args.get('order')
+
+#     faculties = []
+
+#     if author_q:
+#         if mode == 'desc':
+#             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%")).order_by(User.fname.desc())
+#             # faculties = User.filter(User.name.like('%' + author_q + '%'))
+#         else:
+#             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%"))
+#     else:
+#         faculties = User.query.join(Role).filter(Role.name=="faculty")
+
+#     if university_q:
+#         faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))
+
+
+#     page = request.args.get('page', 1, type=int)
+#     faculties = faculties.paginate(page, app.config['FACULTIES_PER_PAGE'], False)
+#     return render_template('filter_author.html')
+
+
+@app.route('/filter/title')
+def filter_title():
+    # user = User.query.get_or_404(id)
+    # if Role.query.get(int(user.role_id)).name.lower() not in ['faculty', 'admin', 'panel']:
+    #     flash('This page is allowed only for faculties', 'warning')
+    #     return redirect(url_for('index'))
+    title_q = request.args.get('title')
+    # university_q = request.args.get('university')
+    per_page_q = request.args.get('per_page') or 10
+    mode = request.args.get('order')
+    page = request.args.get('page', 1, type=int)
+    titles = []
+
+    if title_q:
+        if mode == 'desc':
+            titles = PublishPaper.query.filter(PublishPaper.title.ilike("%"+title_q+"%")).order_by(PublishPaper.title.desc()).paginate(int(page),int(per_page_q),False)
+            # faculties = User.filter(User.name.like('%' + author_q + '%'))
+        else:
+            titles = PublishPaper.query.filter(PublishPaper.title.ilike("%"+title_q+"%")).order_by(PublishPaper.title.asc()).paginate(int(page),int(per_page_q),False)
+    else:
+        
+        titles = PublishPaper.query.paginate(int(page),int(per_page_q),False)
+
+    # if university_q:
+        # faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))    
+    return render_template('filter_title.html',titles = titles,title_q=title_q,per_page_q=per_page_q,mode=mode)
+

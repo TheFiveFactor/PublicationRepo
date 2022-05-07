@@ -1,0 +1,280 @@
+<! DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .navbar {
+        overflow: hidden;
+        background-color: black;
+      }
+
+      .navbar a {
+        float: left;
+        font-size: 16px;
+        color: rgb(239, 239, 234);
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+
+      .dropdown {
+        float: left;
+        overflow: hidden;
+      }
+
+      .dropdown .dropbtn {
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit;
+        margin: 0;
+      }
+
+      .navbar a:hover,
+      .dropdown:hover .dropbtn {
+        background-color: rgb(239, 239, 234);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .dropdown-content a {
+        float: none;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+      }
+
+      .dropdown-content a:hover {
+        background-color: rgb(239, 239, 234);
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+    </style>
+
+    <title>Faculty Publication Repository</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top black">
+      <a class="navbar-brand" href="#">
+        <img
+          src="https://cdn.glitch.global/cb0fb47f-a8c0-49d2-8f79-c86bc78b762a/539-5392274_amrita-university-logo-hd-png-download.png?v=1644943615078"
+          alt="Logo"
+          style="width: 30px"
+          class="rounded-pill"
+        />
+      </a>
+
+      <a class="navbar-brand" href="#" style="color: white; font-size: 18px"
+        >The Five Factor</a
+      >
+      <button
+        class="navbar-toggler navbar-toggler-right"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navb"
+        aria-expanded="true"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar">
+        <div class="dropdown">
+          <button class="dropbtn">
+            Browse
+            <i class="fa fa-caret-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="#">Title</a>
+            <a href="#">Author</a>
+            <a href="#">Issue</a>
+          </div>
+        </div>
+      </div>
+
+      <div id="navb" class="navbar-collapse collapse hide">
+        <ul class="nav navbar-nav ml-auto">
+          <li class="nav-item">
+            <nav class="stroke">
+              <a
+                class="nav-link"
+                href="./login.html"
+                target="_blank"
+                style="color: white; font-size: 15px"
+                ><span class="fas fa-user"></span> Sign Up</a
+              >
+            </nav>
+          </li>
+          <nav class="stroke">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="./login.html"
+                target="_blank"
+                style="color: white; font-size: 15px"
+                ><span class="fas fa-sign-in-alt"></span> Logout</a
+              >
+            </li>
+          </nav>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- navbar /-->
+
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+      <div class="container">
+        <br />
+        <h2>Faculty Publication Repository</h2>
+        <p>
+          The research work of a faculty belonging to a particular institution
+          needs to be recorded and maintained which can be helpful for the
+          faculties and the students who are working on projects in the same
+          field. In-order to store the publications along with their patent, we
+          need some kind of storage space where different people can see the
+          publications posted by professionals.
+        </p>
+        <p>
+          <a class="btn btn-primary btn-lg" href="#" role="button"
+            >Learn more »</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>Browse by Author</h2>
+      <br />
+
+      <form action="">
+        <div class="container">
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Author Name"
+              aria-label="Recipient's username"
+              aria-describedby="basic-addon2"
+            />
+            <div class="input-group-append">
+              <!--             <button class="btn btn-outline-success" type="button">
+              <i class="fas fa-search"></i>
+            </button> -->
+              <input class="btn btn-success" type="submit" value="Search" />
+            </div>
+          </div>
+        </div>
+      </form>
+      <br />
+
+      <form action="">
+        <div class="container">
+          <div class="row">
+            <h4>&nbsp;</h4>
+            <h4>&nbsp;</h4>
+            <h4>Order :</h4>
+            <h4>&nbsp;</h4>
+            <div class="btn-group">
+              <select
+                class="form-select form-select-sm"
+                aria-label=".form-select-sm example"
+              >
+                <option selected>Ascending</option>
+                <option value="des">Descending</option>
+              </select>
+            </div>
+            <h4>&nbsp;</h4>
+            <h4>&nbsp;</h4>
+            <h4>&nbsp;</h4>
+            <h4>Results Per Page :</h4>
+            <h4>&nbsp;</h4>
+            <select
+              class="form-select form-select-sm"
+              aria-label=".form-select-sm example"
+            >
+              <option selected>10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+            </select>
+            <h4>&nbsp;</h4>
+            <h4>&nbsp;</h4>
+            <h4>&nbsp;</h4>
+            <h4>&nbsp;</h4>
+
+            <input class="btn btn-success" type="submit" value="Submit" />
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <br />
+
+    <div class="container">
+      <ul class="list-group">
+        <li class="list-group-item active" style="background-color: black">
+          Showing Results
+        </li>
+        <li class="list-group-item">Database Items</li>
+        <li class="list-group-item">Database Items</li>
+        <li class="list-group-item">Database Items</li>
+        <li class="list-group-item">Database Items</li>
+      </ul>
+    </div>
+
+    <br />
+
+    <!-- <footer> -->
+    <div class="container-fluid dark">
+      <center>
+        <h6 style="padding: 10px">
+          <footer>&copy; Copyright 2022. All rights reserved.</footer>
+        </h6>
+      </center>
+    </div>
+    <!-- </footer> -->
+  </body>
+</html>
