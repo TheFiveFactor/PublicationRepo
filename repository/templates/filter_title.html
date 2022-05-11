@@ -1,373 +1,152 @@
-<! DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <style>
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-      }
-
-      .navbar {
-        overflow: hidden;
-        background-color: black;
-      }
-
-      .navbar a {
-        float: left;
-        font-size: 16px;
-        color: rgb(239, 239, 234);
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-      }
-
-      .dropdown {
-        float: left;
-        overflow: hidden;
-      }
-
-      .dropdown .dropbtn {
-        font-size: 16px;
-        border: none;
-        outline: none;
-        color: white;
-        padding: 14px 16px;
-        background-color: inherit;
-        font-family: inherit;
-        margin: 0;
-      }
-
-      .navbar a:hover,
-      .dropdown:hover .dropbtn {
-        background-color: rgb(239, 239, 234);
-      }
-
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-      }
-
-      .dropdown-content a {
-        float: none;
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        text-align: left;
-      }
-
-      .dropdown-content a:hover {
-        background-color: rgb(239, 239, 234);
-      }
-
-      .dropdown:hover .dropdown-content {
-        display: block;
-      }
-
-      .selectWrapper {
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-        border: 1px solid #bbb;
-        border-radius: 2px;
-        background: #ffffff
-          url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2211%22%20height%3D%2211%22%20viewBox%3D%220%200%2011%2011%22%3E%3Cpath%20d%3D%22M4.33%208.5L0%201L8.66%201z%22%20fill%3D%22%2300AEA9%22%2F%3E%3C%2Fsvg%3E")
-          right 13px center no-repeat;
-      }
-
-      .selectWrapper select {
-        padding: 12px 40px 12px 20px;
-        font-size: 18px;
-        line-height: 18px;
-        width: 100%;
-        border: none;
-        box-shadow: none;
-        background: transparent;
-        background-image: none;
-        -webkit-appearance: none;
-        outline: none;
-        cursor: pointer;
-        -moz-appearance: none;
-        text-indent: 0.01px;
-        text-overflow: ellipsis;
-      }
-    </style>
-
-    <title>Faculty Publication Repository</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="index.css" />
-
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-  </head>
-
-  <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top black">
-      <a class="navbar-brand" href="#">
-        <img
-          src="https://cdn.glitch.global/cb0fb47f-a8c0-49d2-8f79-c86bc78b762a/539-5392274_amrita-university-logo-hd-png-download.png?v=1644943615078"
-          alt="Logo"
-          style="width: 30px"
-          class="rounded-pill"
-        />
-      </a>
-
-      <a class="navbar-brand" href="#" style="color: white; font-size: 18px"
-        >The Five Factor</a
-      >
-      <button
-        class="navbar-toggler navbar-toggler-right"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navb"
-        aria-expanded="true"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="navbar">
-        <div class="dropdown">
-          <button class="dropbtn">
-            Browse
-            <i class="fa fa-caret-down"></i>
-          </button>
-          <div class="dropdown-content">
-            <a href="#">Title</a>
-            <a href="#">Author</a>
-            <a href="#">Issue</a>
-          </div>
-        </div>
-      </div>
-
-      <div id="navb" class="navbar-collapse collapse hide">
-        <ul class="nav navbar-nav ml-auto">
-          <li class="nav-item">
-            <nav class="stroke">
-              <a
-                class="nav-link"
-                href="./login.html"
-                target="_blank"
-                style="color: white; font-size: 15px"
-                ><span class="fas fa-user"></span> Sign Up</a
-              >
-            </nav>
-          </li>
-          <nav class="stroke">
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="./login.html"
-                target="_blank"
-                style="color: white; font-size: 15px"
-                ><span class="fas fa-sign-in-alt"></span> Logout</a
-              >
-            </li>
-          </nav>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- navbar /-->
-
-    <!-- Jumbotron -->
-    <div class="jumbotron">
-      <div class="container">
+{% extends "base2.html" %} {% block content %}
+<!-- Jumbotron -->
+<div class="jumbotron">
+    <div class="container">
         <br />
         <h2>Faculty Publication Repository</h2>
         <p>
-          The research work of a faculty belonging to a particular institution
-          needs to be recorded and maintained which can be helpful for the
-          faculties and the students who are working on projects in the same
-          field. In-order to store the publications along with their patent, we
-          need some kind of storage space where different people can see the
-          publications posted by professionals.
+            The research work of a faculty belonging to a particular institution
+            needs to be recorded and maintained which can be helpful for the
+            faculties and the students who are working on projects in the same
+            field. In-order to store the publications along with their patent,
+            we need some kind of storage space where different people can see
+            the publications posted by professionals.
         </p>
         <p>
-          <a class="btn btn-primary btn-lg" href="#" role="button"
-            >Learn more »</a
-          >
+            <a class="btn btn-primary btn-lg" href="/" role="button"
+                >Learn more »</a
+            >
         </p>
-      </div>
     </div>
+</div>
 
-    <div class="container">
-      <form action="" method="get">
+<div class="container">
+    <form action="" method="get">
         <div class="container">
-          <h2>Browse by Title</h2>
-          <div class="input-group mb-3">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Title"
-              aria-label="Recipient's username"
-              aria-describedby="basic-addon2"
-              name="title"
-            />
-            <div class="input-group-append">
-              <input class="btn btn-success" type="submit" value="Search" />
+            <h2>Browse by Title</h2>
+            <div class="input-group mb-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Title"
+                    aria-label="Recipient's username"
+                    aria-describedby="basic-addon2"
+                    name="title"
+                />
+                <div class="input-group-append">
+                    <input
+                        class="btn btn-success"
+                        type="submit"
+                        value="Search"
+                    />
+                </div>
             </div>
-          </div>
         </div>
         <br />
         <div class="container">
-          <div class="row">
-            <h4>&nbsp;</h4>
-            <h4>&nbsp;</h4>
-            <h4>Order :</h4>
-            <h4>&nbsp;</h4>
-            <div class="btn-group">
-              <select
-                class="form-control"
-                aria-label=".form-select-sm example"
-                name="order"
-              >
-                <option selected value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-              </select>
+            <div class="row">
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+                <h4>Order :</h4>
+                <h4>&nbsp;</h4>
+                <div class="btn-group">
+                    <select
+                        class="form-control"
+                        aria-label=".form-select-sm example"
+                        name="order"
+                    >
+                        <option selected value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+                <h4>Results Per Page :</h4>
+                <h4>&nbsp;</h4>
+                <select
+                    class="form-control"
+                    style="width: 4rem"
+                    aria-label=".form-select-sm example"
+                    name="per_page"
+                >
+                    <option selected>10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                </select>
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+
+                <input class="btn btn-success" type="submit" value="Submit" />
             </div>
-            <h4>&nbsp;</h4>
-            <h4>&nbsp;</h4>
-            <h4>&nbsp;</h4>
-            <h4>Results Per Page :</h4>
-            <h4>&nbsp;</h4>
-            <select
-              class="form-control"
-              style="width: 4rem"
-              aria-label=".form-select-sm example"
-              name="per_page"
-            >
-              <option selected>10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
-            </select>
-            <h4>&nbsp;</h4>
-            <h4>&nbsp;</h4>
-            <h4>&nbsp;</h4>
-            <h4>&nbsp;</h4>
-
-            <input class="btn btn-success" type="submit" value="Submit" />
-          </div>
         </div>
-      </form>
-    </div>
+    </form>
+</div>
 
-    <br />
+<br />
 
-    <div class="container">
-      <table class="table">
+<div class="container">
+    <table class="table">
         <thead class="thead-dark">
-          <tr>
-            <th>Published Year</th>
-            <th>Title</th>
-            <th>Author(s)</th>
-          </tr>
+            <tr>
+                <th>Published Year</th>
+                <th>Title</th>
+                <th>Author(s)</th>
+            </tr>
         </thead>
         <tbody>
-          <!-- <tr>
-            <td>John</td>
-            <td>Doe</td>
-            <td>john@example.com</td>
-          </tr>
-          <tr>
-            <td>Mary</td>
-            <td>Moe</td>
-            <td>mary@example.com</td>
-          </tr>
-          <tr>
-            <td>July</td>
-            <td>Dooley</td>
-            <td>july@example.com</td>
-          </tr> -->
-          {% for paper_title in titles.items %}
-          <tr>
-              <td>{{ paper_title.published_year }}</td>
-              <td>{{ paper_title.title }}</td>
-              <td>
-                <ul style="list-style-type: none;">
-                    {% for author in paper_title.authors %}
-                        {% if author.faculty %}
-                            <li><a href="{{ url_for('faculty_profile', id=author.id) }}">{{ author.fname + " " + author.lname }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <!--         <div class="container">
-      
-      <center>
-    <div class="row">
-      <div class="col-sm-2">Database Items</div>
-      <div class="col-sm-7">Database Items</div>
-      <div class="col-sm-3">Database Items</div>
-    </div>
-        
-        <div class="row">
-      <div class="col-sm-2">Database Items</div>
-      <div class="col-sm-7">Database Items</div>
-      <div class="col-sm-3">Database Items</div>
-    </div>
-        
-        <div class="row">
-      <div class="col-sm-2">Database Items</div>
-      <div class="col-sm-7">Database Items</div>
-      <div class="col-sm-3">Database Items</div>
-    </div>    
-      
-    </center>
-    </div>
-    -->
-    <br />
-    <div class="container-fluid">
-        <ul class="pagination">
-            {% for page_num in titles.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-                {% if page_num %}
-                    {% if titles.page == page_num %}
-                        <!-- <a href="{{ url_for('all_faculties', page=page_num) }}" class="btn btn-info">{{ page_num }}</a> -->
-                        <li class="page-item active"><a href="{{ url_for('filter_title', page=page_num,title=title_q,mode=mode,per_page=per_page_q) }}" class="page-link">{{ page_num }}</a></li>
-                    {% else %}
-                        <!-- <a href="{{ url_for('all_faculties', page=page_num) }}" class="btn btn-outline-info">{{ page_num }}</a> -->
-                        <li class="page-item"><a href="{{ url_for('filter_title', page=page_num, title=title_q, mode=mode, per_page=per_page_q) }}" class="page-link">{{ page_num }}</a></li>
-                    {% endif %}
-                {% else %}
-                    ...
-                {% endif %}
+            {% for paper_title in titles.items %}
+            <tr>
+                <td>{{ paper_title.published_year }}</td>
+                <td>{{ paper_title.title }}</td>
+                <td>
+                    <ul style="list-style-type: none; display: block;">
+                        {% for author in paper_title.authors %}
+                            {% if author.faculty %}
+                                <li>
+                                    <a
+                                        href="{{ url_for('faculty_profile', id=author.id) }}"
+                                        >{{ author.fname + " " + author.lname }}</a
+                                    >
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
             {% endfor %}
-        </ul>
-    </div>
+        </tbody>
+    </table>
+</div>
 
-    <!-- <footer> -->
-    <div class="container-fluid dark">
-      <center>
-        <h6 style="padding: 10px">
-          <footer>&copy; Copyright 2022. All rights reserved.</footer>
-        </h6>
-      </center>
-    </div>
-    <!-- </footer> -->
-  </body>
-</html>
+<br />
+
+<div class="container" style="display: flex; justify-content: center;">
+    <ul class="pagination">
+        {% for page_num in titles.iter_pages(left_edge=1, right_edge=1,
+        left_current=1, right_current=2) %} {% if page_num %} {% if titles.page
+        == page_num %}
+        <!-- <a href="{{ url_for('all_faculties', page=page_num) }}" class="btn btn-info">{{ page_num }}</a> -->
+        <li class="page-item active">
+            <a
+                href="{{ url_for('filter_title', page=page_num,title=title_q,mode=mode,per_page=per_page_q) }}"
+                class="page-link"
+                >{{ page_num }}</a
+            >
+        </li>
+        {% else %}
+        <!-- <a href="{{ url_for('all_faculties', page=page_num) }}" class="btn btn-outline-info">{{ page_num }}</a> -->
+        <li class="page-item">
+            <a
+                href="{{ url_for('filter_title', page=page_num, title=title_q, mode=mode, per_page=per_page_q) }}"
+                class="page-link"
+                >{{ page_num }}</a
+            >
+        </li>
+        {% endif %} {% else %} ... {% endif %} {% endfor %}
+    </ul>
+</div>
+{% endblock content %}
