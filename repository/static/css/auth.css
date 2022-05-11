@@ -13,7 +13,9 @@ body {
     font-family: "Montserrat", sans-serif;
     height: 100vh;
     margin: -20px 0 50px;
-    background-image: url("/static/images/auth-bg.jpg");
+    /* background-image: url("/static/images/auth-bg.jpg"); */
+    /* background-color: #fff7d2; */
+    background: linear-gradient(to bottom right, #2a2727 0%, #f9f2f2 100%);
     background-size: cover;
 }
 
@@ -47,9 +49,11 @@ a {
 
 button {
     border-radius: 20px;
-    border: 1px solid #ff4b2b;
-    background-color: #ff4b2b;
-    color: #ffffff;
+    /* border: 1px solid #ff4b2b;
+    background-color: #ff4b2b; */
+    border: 1px solid #000;
+    background-color: #ffed2b;
+    color: #000;
     font-size: 12px;
     font-weight: bold;
     padding: 12px 45px;
@@ -60,8 +64,10 @@ button {
 
 input[type="submit"] {
     border-radius: 20px;
-    border: 1px solid #ff4b2b;
-    background-color: #ff4b2b;
+    /* border: 1px solid #ff4b2b;
+    background-color: #ff4b2b; */
+    border: 1px solid #ffc900;
+    background-color: #ffc900;
     color: #ffffff;
     font-size: 12px;
     font-weight: bold;
@@ -80,8 +86,9 @@ button:focus {
 }
 
 button.ghost {
-    background-color: transparent;
-    border-color: #ffffff;
+    background-color: white;
+    border-color: black;
+    color: black;
 }
 
 form {
@@ -175,13 +182,18 @@ input, select {
 }
 
 .overlay {
-    background: #ff416c;
-    background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
-    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    /* background: #ff416c; */
+    /* background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
+    background: linear-gradient(to right, #ff4b2b, #ff416c); */
+    /* background: -webkit-linear-gradient(to right, #eec11d, #ffff66);
+    background: linear-gradient(to right, #eec11d, #ffff66); */
+    background: -webkit-linear-gradient(to right, #ffef42, #ffef42);
+    background: linear-gradient(to right, #ffef42, #ffef42);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 0 0;
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: #000000;
     position: relative;
     left: -100%;
     height: 100%;
