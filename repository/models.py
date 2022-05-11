@@ -99,6 +99,9 @@ class User(UserMixin, db.Model):
     def publications(self):
         return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id)).all()
 
+    def publications_object(self):
+        return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id))
+
     def pending_publications(self):
         return PublishPaper.query.filter(PublishPaper.authors.any(User.id == self.id), PublishPaper.is_paper_authorized==None).all()
 
@@ -171,7 +174,7 @@ class PublishPaper(db.Model):
     @staticmethod
     def get_pending_papers():
         return PublishPaper.query.filter_by(is_paper_authorized=None).all()
-    
+
     @staticmethod
     def generate_unique_paper_id():
         uu = uuid.uuid4().hex[:8]

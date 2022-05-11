@@ -6,13 +6,13 @@ from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request, send_from_directory
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum
+from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum, author_publish_paper
 from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
     RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm, EditFacultyProfileForm
 
 import smtplib
 from email.message import Message
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 # Utils
 def save_profile_picture(form_picture):
@@ -474,10 +474,20 @@ def filter_title():
         else:
             titles = PublishPaper.query.filter(PublishPaper.title.ilike("%"+title_q+"%")).order_by(PublishPaper.title.asc()).paginate(int(page),int(per_page_q),False)
     else:
-        
+
         titles = PublishPaper.query.paginate(int(page),int(per_page_q),False)
 
     # if university_q:
-        # faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))    
+        # faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))
     return render_template('filter_title.html',titles = titles,title_q=title_q,per_page_q=per_page_q,mode=mode)
 
+
+@app.route('/browse')
+def browse_all():
+    departments = Department.query.all()
+    page = request.args.get('author_page', 1, type=int)
+    # authors = User.query.join(Role).filter(Role.name!="student").order_by().paginate(page, 8, False)
+    authors = db.session.query(User, func.count(author_publish_paper.c.user_id).label('total')) \
+        .join(author_publish_paper).join(Role).filter(Role.name!="student") \
+        .group_by(User).order_by(text('total DESC')).paginate(page, 8, False)
+    return render_template('browse.html', departments=departments, authors=authors)
