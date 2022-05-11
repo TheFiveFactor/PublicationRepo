@@ -6,7 +6,7 @@ from repository import app, db, github
 from flask import url_for, render_template, redirect, flash, request, send_from_directory
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from repository.models import Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum, author_publish_paper
+from repository.models import DepartmentAreas, Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum, author_publish_paper
 from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
     RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm, EditFacultyProfileForm
 
@@ -424,34 +424,32 @@ def pub_file(paper_id, filename):
         flash("Authorized only for faculties", 'warning')
         return redirect(url_for('view_paper', id=paper.id))
 
-# @app.route('/filter/author')
-# def filter_author():
-#     # user = User.query.get_or_404(id)
-#     # if Role.query.get(int(user.role_id)).name.lower() not in ['faculty', 'admin', 'panel']:
-#     #     flash('This page is allowed only for faculties', 'warning')
-#     #     return redirect(url_for('index'))
-#     author_q = request.args.get('author')
-#     university_q = request.args.get('university')
-#     mode = request.args.get('order')
+@app.route('/filter/author')
+def filter_author():
+    # user = User.query.get_or_404(id)66
+    # if Role.query.get(int(user.role_id)).name.lower() not in ['faculty', 'admin', 'panel']:
+    #     flash('This page is allowed only for faculties', 'warning')
+    #     return redirect(url_for('index'))
+    author_q = request.args.get('author')
+    mode = request.args.get('order')
+    per_page_q = request.args.get('per_page') or 10
+    page = request.args.get('page', 1, type=int)
+    authors = []
 
-#     faculties = []
+    authors = User.query.join(Role).filter(Role.name!="student")
+    if author_q:
+        if mode == 'desc':
+            authors = authors.filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%")).order_by(User.fname.desc()).paginate(int(page),int(per_page_q),False)
+            # faculties = User.filter(User.name.like('%' + author_q + '%'))
+        else:
+            authors = authors.filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%")).order_by(User.fname.asc()).paginate(int(page),int(per_page_q),False)
+    else:
+        authors = User.query.join(Role).filter(Role.name!="student").paginate(int(page), int(per_page_q), False)
 
-#     if author_q:
-#         if mode == 'desc':
-#             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%")).order_by(User.fname.desc())
-#             # faculties = User.filter(User.name.like('%' + author_q + '%'))
-#         else:
-#             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%"))
-#     else:
-#         faculties = User.query.join(Role).filter(Role.name=="faculty")
-
-#     if university_q:
-#         faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))
-
-
-#     page = request.args.get('page', 1, type=int)
-#     faculties = faculties.paginate(page, app.config['FACULTIES_PER_PAGE'], False)
-#     return render_template('filter_author.html')
+   
+    # page = request.args.get('page', 1, type=int)
+    # faculties = faculties.paginate(page, app.config['FACULTIES_PER_PAGE'], False)
+    return render_template('filter_author.html', authors=authors, author_q=author_q, per_page_q=per_page_q, mode=mode)
 
 
 @app.route('/filter/title')
@@ -479,7 +477,7 @@ def filter_title():
 
     # if university_q:
         # faculties = faculties.join(Institution).filter(Institution.name.ilike("%" + university_q + "%"))
-    return render_template('filter_title.html',titles = titles,title_q=title_q,per_page_q=per_page_q,mode=mode)
+    return render_template('filter_title.html', titles=titles, title_q=title_q, per_page_q=per_page_q, mode=mode)
 
 
 @app.route('/browse')
@@ -491,3 +489,9 @@ def browse_all():
         .join(author_publish_paper).join(Role).filter(Role.name!="student") \
         .group_by(User).order_by(text('total DESC')).paginate(page, 8, False)
     return render_template('browse.html', departments=departments, authors=authors)
+
+
+@app.route('/filter/all_departments/<int:id>')
+def all_departments(id):
+    department_area = DepartmentAreas.query.get_or_404(id)
+    return render_template('all_department.html', department_area=department_area)

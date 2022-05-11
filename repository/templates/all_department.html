@@ -20,18 +20,18 @@
     </div>
 </div>
 
-<div class="container">
+<!-- <div class="container">
     <form action="" method="get">
         <div class="container">
-            <h2>Browse by Author</h2>
+            <h2>Browse by Title</h2>
             <div class="input-group mb-3">
                 <input
                     type="text"
                     class="form-control"
-                    placeholder="Author Name"
+                    placeholder="Title"
                     aria-label="Recipient's username"
                     aria-describedby="basic-addon2"
-                    name="author"
+                    name="title"
                 />
                 <div class="input-group-append">
                     <input
@@ -84,54 +84,49 @@
             </div>
         </div>
     </form>
-</div>
+</div> -->
 
 <br />
 
 <div class="container">
+    <h2>
+        {{ department_area.name }} &nbsp;
+        <span class="badge badge-pill badge-dark mr-2">{{ department_area.publish_papers|count }}</span>
+      </h2>
+      <br />
+      <br />
+
     <table class="table">
         <thead class="thead-dark">
             <tr>
+                <th>Published Year</th>
+                <th>Title</th>
                 <th>Author(s)</th>
             </tr>
         </thead>
         <tbody>
-            {% for author in authors.items %}
+            {% for paper in department_area.publish_papers %}
             <tr>
-                <td><a href="{{ url_for('faculty_profile', id=author.id) }}">{{ author.fname + " " + author.lname }}</a></td>
+                <td>{{ paper.published_year }}</td>
+                <td><a href="{{ url_for('view_paper', id=paper.id) }}">{{ paper.title }}</a></td>
+                <td>
+                    <ul style="list-style-type: none; display: block;">
+                        {% for author in paper.authors %}
+                            {% if author.faculty %}
+                                <li>
+                                    <a href="{{ url_for('faculty_profile', id=author.id) }}"
+                                        >{{ author.fname + " " + author.lname }}</a
+                                    >
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
-<br />
 
-<div class="container" style="display: flex; justify-content: center;">
-    <ul class="pagination">
-        {% for page_num in authors.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} 
-            {% if page_num %} 
-                {% if authors.page== page_num %}
-                <li class="page-item active">
-                    <a
-                        href="{{ url_for('filter_title', page=page_num,title=title_q,mode=mode,per_page=per_page_q) }}"
-                        class="page-link"
-                        >{{ page_num }}</a
-                    >
-                </li>
-                {% else %}
-                <li class="page-item">
-                    <a
-                        href="{{ url_for('filter_title', page=page_num, title=title_q, mode=mode, per_page=per_page_q) }}"
-                        class="page-link"
-                        >{{ page_num }}</a
-                    >
-                </li>
-                {% endif %} 
-            {% else %} 
-                ... 
-            {% endif %} 
-        {% endfor %}
-    </ul>
-</div>
 {% endblock content %}

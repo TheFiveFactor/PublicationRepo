@@ -101,14 +101,13 @@
             {% for paper_title in titles.items %}
             <tr>
                 <td>{{ paper_title.published_year }}</td>
-                <td>{{ paper_title.title }}</td>
+                <td><a href="{{ url_for('view_paper', id=paper_title.id) }}">{{ paper_title.title }}</a></td>
                 <td>
                     <ul style="list-style-type: none; display: block;">
                         {% for author in paper_title.authors %}
                             {% if author.faculty %}
                                 <li>
-                                    <a
-                                        href="{{ url_for('faculty_profile', id=author.id) }}"
+                                    <a href="{{ url_for('faculty_profile', id=author.id) }}"
                                         >{{ author.fname + " " + author.lname }}</a
                                     >
                                 </li>
@@ -129,7 +128,6 @@
         {% for page_num in titles.iter_pages(left_edge=1, right_edge=1,
         left_current=1, right_current=2) %} {% if page_num %} {% if titles.page
         == page_num %}
-        <!-- <a href="{{ url_for('all_faculties', page=page_num) }}" class="btn btn-info">{{ page_num }}</a> -->
         <li class="page-item active">
             <a
                 href="{{ url_for('filter_title', page=page_num,title=title_q,mode=mode,per_page=per_page_q) }}"
@@ -138,7 +136,6 @@
             >
         </li>
         {% else %}
-        <!-- <a href="{{ url_for('all_faculties', page=page_num) }}" class="btn btn-outline-info">{{ page_num }}</a> -->
         <li class="page-item">
             <a
                 href="{{ url_for('filter_title', page=page_num, title=title_q, mode=mode, per_page=per_page_q) }}"

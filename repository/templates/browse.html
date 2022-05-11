@@ -54,7 +54,7 @@
                             <!-- <a href="#" class="list-group-item list-group-item-action">abc</a> -->
                             {% for department_area in department.department_areas %}
                                 <a
-                                    href="#"
+                                    href="{{ url_for('all_departments', id=department_area.id) }}"
                                     class="list-group-item list-group-item-action"
                                     >{{ department_area.name }}</a
                                 >
@@ -71,7 +71,7 @@
                         <div class="list-group">
                             {% for department_area in department.department_areas %}
                                 <a
-                                    href="#"
+                                    href="{{ url_for('all_departments', id=department_area.id) }}"
                                     class="list-group-item list-group-item-action"
                                     >{{ department_area.name }}</a
                                 >
