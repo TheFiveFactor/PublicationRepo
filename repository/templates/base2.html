@@ -132,6 +132,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            {% if current_user.is_authenticated %}
             <div class="dropdown">
                 <button class="dropbtn">Browse</button>
                 <div class="dropdown-content">
@@ -140,6 +141,7 @@
                     <a href="{{ url_for('filter_author') }}">Author </a>
                 </div>
             </div>
+            {% endif %}
 
             <div id="navb" class="navbar-collapse collapse hide">
                 <ul class="nav navbar-nav ml-auto">
