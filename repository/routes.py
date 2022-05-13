@@ -245,6 +245,9 @@ def publish_paper():
 
         if 'paper_file' in request.files and request.files['paper_file'].filename != '':
             _, f_ext = os.path.splitext(request.files['paper_file'].filename)
+            if f_ext not in ['jpg', 'png', 'jpeg', 'gif']:
+                flash('Invalid file type', 'danger')
+                return redirect(url_for('publish_paper'))
             # print(f_ext[1:], str(PaperType.query.get(int(form.paper_type.data))).name.lower())
             if PaperType.query.get(int(form.paper_type.data)).name.lower() == 'dataset' and (f_ext[1:] not in ['csv', 'tsv', 'json', 'xlsx']):
                 flash("For Dataset extension should be in 'csv', 'tsv', 'json', 'xlsx'", 'danger')
