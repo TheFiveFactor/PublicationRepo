@@ -101,7 +101,7 @@
             {% for paper_title in titles.items %}
             <tr>
                 <td>{{ paper_title.published_year }}</td>
-                <td><a href="{{ url_for('view_paper', id=paper_title.id) }}">{{ paper_title.title }}</a></td>
+                <td style="word-wrap: break-word;min-width: 160px;max-width: 160px;"><a href="{{ url_for('view_paper', id=paper_title.id) }}">{{ paper_title.title }}</a></td>
                 <td>
                     <ul style="list-style-type: none; display: block;">
                         {% for author in paper_title.authors %}

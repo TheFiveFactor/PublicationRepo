@@ -1,3 +1,4 @@
+from datetime import datetime
 import secrets, os
 import time
 from turtle import title
@@ -446,7 +447,7 @@ def filter_author():
     else:
         authors = User.query.join(Role).filter(Role.name!="student").paginate(int(page), int(per_page_q), False)
 
-   
+
     # page = request.args.get('page', 1, type=int)
     # faculties = faculties.paginate(page, app.config['FACULTIES_PER_PAGE'], False)
     return render_template('filter_author.html', authors=authors, author_q=author_q, per_page_q=per_page_q, mode=mode)
@@ -495,3 +496,14 @@ def browse_all():
 def all_departments(id):
     department_area = DepartmentAreas.query.get_or_404(id)
     return render_template('all_department.html', department_area=department_area)
+
+@app.route('/filter/year')
+def filter_year():
+    year_q = request.args.get('year') or datetime.utcnow().year
+    # mode = request.args.get('order')
+    per_page_q = request.args.get('per_page', 10, type=int)
+    page = request.args.get('page', 1, type=int)
+    papers = []
+
+    papers = PublishPaper.query.filter_by(published_year=int(year_q)).paginate(page, per_page_q, False)
+    return render_template('filter_year.html', year_q=year_q, papers=papers)
