@@ -1,10 +1,9 @@
 from datetime import datetime
 import secrets, os
 import time
-from turtle import title
 from PIL import Image
 from repository import app, db, github
-from flask import url_for, render_template, redirect, flash, request, send_from_directory
+from flask import url_for, render_template, redirect, flash, request, send_from_directory, send_file
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from repository.models import DepartmentAreas, Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum, author_publish_paper
@@ -245,7 +244,7 @@ def publish_paper():
 
         if 'paper_file' in request.files and request.files['paper_file'].filename != '':
             _, f_ext = os.path.splitext(request.files['paper_file'].filename)
-            if f_ext not in ['jpg', 'png', 'jpeg', 'gif']:
+            if f_ext[1:] not in ['pdf', 'csv', 'tsv', 'json', 'xlsx']:
                 flash('Invalid file type', 'danger')
                 return redirect(url_for('publish_paper'))
             # print(f_ext[1:], str(PaperType.query.get(int(form.paper_type.data))).name.lower())
@@ -398,7 +397,41 @@ def view_paper(id):
             next_page = request.args.get('next') or request.referrer or url_for('index')
             return redirect(next_page)
     paper_access = paper.access == PaperAccessEnum.ALLOW_ALL
+
     return render_template('view_paper.html', title='View Paper', paper=paper, paper_access=paper_access)
+
+@app.route('/paper/<int:id>/download')
+def download_paper(id):
+    paper = PublishPaper.query.get_or_404(id)
+    authors = [author.id for author in paper.authors]
+    if not paper.is_paper_authorized:
+        if not (current_user.is_authenticated and current_user.id in authors):
+            flash("This paper is not authorized yet", "danger")
+            next_page = request.args.get('next') or request.referrer or url_for('index')
+            return redirect(next_page)
+    # paper_access = paper.access == PaperAccessEnum.ALLOW_ALL
+    return send_file(
+        os.path.join(app.root_path, 'protected', paper.paper_file),
+        as_attachment=True
+    )
+
+@app.route('/paper/<int:id>/delete')
+@login_required
+def delete_paper(id):
+    paper = PublishPaper.query.get_or_404(id)
+    authors = [author.id for author in paper.authors]
+    if not paper.is_paper_authorized:
+        if not current_user.id in authors:
+            flash("This paper is not authorized for you", "danger")
+            next_page = request.args.get('next') or request.referrer or url_for('index')
+            return redirect(next_page)
+
+    if paper.paper_file != None:
+        os.remove(os.path.join(app.root_path, 'protected', paper.paper_file))
+    db.session.delete(paper)
+    db.session.commit()
+    flash("Successfully deleted the paper", "success")
+    return redirect(url_for('faculty_profile', id=current_user.id))
 
 @app.route('/protected/<int:paper_id>/<path:filename>')
 def pub_file(paper_id, filename):

@@ -51,6 +51,10 @@
             </tr>
         </tbody>
         </table>
+
+        {% if current_user in paper.authors %}
+            <button class="btn btn-danger" onclick="confirmDelete();">Delete</button>
+        {% endif %}
     </div>
 
     <div class="container p-4 my-3 border">
@@ -63,8 +67,9 @@
         <tbody>
             <tr>
                 <td><b>Files</b></td>
-                <td><b>size</b></td>
-                <td><b>format</b></td>
+                <td><b>Size</b></td>
+                <td><b>Format</b></td>
+                <td style="text-align: center;"><b>Download</b></td>
             </tr>
             {% if paper.paper_file %}
                 {% if not paper_access %}
@@ -76,6 +81,7 @@
                     </td>
                     <td>{{ paper.get_paper_size(unit="KB") }}KB</td>
                     <td>{{ paper.paper_file.split(".")[-1] }}</td>
+                    <td style="text-align: center;"><a href="{{ url_for('download_paper', id=paper.id) }}"><i class="fas fa-download"></i></a></td>
                 </tr>
             {% else %}
                 <tr>
@@ -92,4 +98,16 @@
         all rights reserved, unless otherwise indicated.
         </p>
     </div>
+
+<script>
+    function confirmDelete() {
+        let text = "Are you sure Deleting the paper?";
+        if (confirm(text) == true) {
+            window.location = "{{ url_for('delete_paper', id=paper.id) }}";
+            // text = "You pressed OK!";
+        } else {
+            // text = "You canceled!";
+        }
+    }
+</script>
 {% endblock content %}
