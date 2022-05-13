@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
     role = SelectField('You are a', choices=[('student', 'Student'), ('faculty', 'Faculty')], validators=[DataRequired()])
     institution = SelectField('You belong to', \
         choices=[(institution.id, institution.name) for institution in Institution.query.all()], validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
@@ -98,7 +98,7 @@ class PublishPaperForm(FlaskForm):
     authors = SelectMultipleField(choices=[(str(user.id), user.fname + " " + user.lname) for user in User.getWhoCanPublish()],
         validators=[DataRequired()])
     publisher = StringField('Publisher', validators=[DataRequired(), Length(min=1, max=255)])
-    published_year = IntegerField('Publishing Year', validators=[DataRequired(), NumberRange(max=datetime.utcnow().year)])
+    published_year = IntegerField('Publishing Year', validators=[DataRequired(), NumberRange(min=1950, max=datetime.utcnow().year)])
     access = SelectField('Access', choices=PaperAccessEnum.fetch_fields(), validators=[DataRequired()])
     paper_file = FileField('Upload file', validators=[FileAllowed(['pdf', 'csv', 'tsv', 'json', 'xlsx'])])
     submit = SubmitField('Publish Paper')
