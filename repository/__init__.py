@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, url_for
+from flask import Flask, flash, redirect, url_for, request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
+from flask_admin.contrib import sqla as flask_admin_sqla
 from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
@@ -48,25 +49,54 @@ github = oauth.register(
 from repository import routes, models
 
 # Admin
-"""
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
+        # print(current_user.is_authenticated)
+        # return False
+        flash("You need to login", "success")
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login'))
-"""
+        # return redirect(url_for('login'))
+        # redirect to login page if user doesn't have access
+        print("inaccess")
+        return redirect(url_for('login', next=request.url))
 
-# admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3', index_view=AdminIndexView)
+    @expose('/')
+    def index(self):
+        if not current_user.is_authenticated:
+            return redirect(url_for('login', next=request.url))
+        return super(MyAdminIndexView, self).index()
+
+
+class DefaultModelView(flask_admin_sqla.ModelView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def is_accessible(self):
+        # print(current_user.is_authenticated)
+        # print(current_user.is_authenticated, current_user.role.name, current_user.role.name == "admin")
+        is_acc = current_user.is_authenticated and current_user.role.name == "admin"
+        if not is_acc:
+            flash("You need to login And you chould be admin", "success")
+        return is_acc
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        print("inaccess")
+        return redirect(url_for('login', next=request.url))
+
+
+# admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3', index_view=AdminIndexView())
 admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3')
-admin.add_view(ModelView(models.Role, db.session))
-admin.add_view(ModelView(models.Institution, db.session))
-admin.add_view(ModelView(models.User, db.session))
-admin.add_view(ModelView(models.Faculty, db.session))
-admin.add_view(ModelView(models.Department, db.session))
-admin.add_view(ModelView(models.DepartmentAreas, db.session))
-admin.add_view(ModelView(models.PaperType, db.session))
-admin.add_view(ModelView(models.PublishPaper, db.session))
+admin.add_view(DefaultModelView(models.Role, db.session))
+admin.add_view(DefaultModelView(models.Institution, db.session))
+admin.add_view(DefaultModelView(models.User, db.session))
+admin.add_view(DefaultModelView(models.Faculty, db.session))
+admin.add_view(DefaultModelView(models.Department, db.session))
+admin.add_view(DefaultModelView(models.DepartmentAreas, db.session))
+admin.add_view(DefaultModelView(models.PaperType, db.session))
+admin.add_view(DefaultModelView(models.PublishPaper, db.session))
 
 class AnalyticsView(BaseView):
     @expose('/')
