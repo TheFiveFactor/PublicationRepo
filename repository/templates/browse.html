@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-6 col-sm-6">
             <br />
-            <h4>Communities in the repository</h4>
+            <h4>Departments in the repository</h4>
             <br />
 
             <div id="accordion">
@@ -51,7 +51,6 @@
                         data-parent="#accordion"
                     >
                         <div class="list-group">
-                            <!-- <a href="#" class="list-group-item list-group-item-action">abc</a> -->
                             {% for department_area in department.department_areas %}
                                 <a
                                     href="{{ url_for('all_departments', id=department_area.id) }}"

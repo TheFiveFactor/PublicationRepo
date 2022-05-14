@@ -13,6 +13,7 @@ from authlib.integrations.flask_client import OAuth
 
 import smtplib
 from email.message import Message
+from sqlalchemy import func, text
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -39,24 +40,15 @@ github = oauth.register(
     api_base_url='https://api.github.com/',
     client_kwargs={'scope': 'user:email'},
 )
-# facebook = oauth.register(
-#     name='facebook',
-#     client_id=os.environ.get('FACEBOOK_CLIENT_ID'),
-#     client_secret=os.environ.get('FACEBOOK_CLIENT_SECRET'),
-#     access_token_url='https://graph.facebook.com/oauth/access_token',
-#     access_token_params=None,
-#     authorize_url='https://www.facebook.com/dialog/oauth',
-#     authorize_params=None,
-#     api_base_url='https://graph.facebook.com/',
-#     client_kwargs={'scope': 'email'},
-# )
 
 from repository import routes, models
 
 # Admin
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
-        flash("You need to login", "success")
+        is_acc = current_user.is_authenticated and current_user.role.name == "admin"
+        if not is_acc:
+            flash("You need to login", "success")
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
@@ -64,9 +56,12 @@ class MyAdminIndexView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        if not current_user.is_authenticated:
-            return redirect(url_for('login', next=request.url))
-        return super(MyAdminIndexView, self).index()
+        departments = models.Department.query.all()
+        page = request.args.get('author_page', 1, type=int)
+        authors = db.session.query(models.User, func.count(models.author_publish_paper.c.user_id).label('total')) \
+            .join(models.author_publish_paper).join(models.Role).filter(models.Role.name!="student") \
+            .group_by(models.User).order_by(text('total DESC')).paginate(page, 8, False)
+        return self.render('admin_index.html', arg1="hi", departments=departments, authors=authors)
 
 
 class DefaultModelView(flask_admin_sqla.ModelView):
@@ -83,8 +78,8 @@ class DefaultModelView(flask_admin_sqla.ModelView):
         return redirect(url_for('login', next=request.url))
 
 
-# admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3', index_view=AdminIndexView())
-admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3')
+admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3', index_view=MyAdminIndexView())
+# admin = Admin(app, name='Faculty Publication Repo Admin', template_mode='bootstrap3')
 admin.add_view(DefaultModelView(models.Role, db.session))
 admin.add_view(DefaultModelView(models.Institution, db.session))
 admin.add_view(DefaultModelView(models.User, db.session))
@@ -100,6 +95,18 @@ class AnalyticsView(BaseView):
         return self.render('analytics_index.html')
 
 class PendingPaper(BaseView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def is_accessible(self):
+        is_acc = current_user.is_authenticated and current_user.role.name == "admin"
+        if not is_acc:
+            flash("You need to login And you should be admin", "success")
+        return is_acc
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login', next=request.url))
+
     def send_rejection_mail(self, paper, recipients, reason):
         msg = Message()
         msg['Subject'] = "Paper Request Rejection"
@@ -113,7 +120,6 @@ class PendingPaper(BaseView):
         msg.set_payload(message)
         s.starttls()
         s.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        # s.sendmail(msg['From'], [msg['To']], msg.as_string())
         s.sendmail(msg['From'], recipients, msg.as_string())
         s.quit()
 
