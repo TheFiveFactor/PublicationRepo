@@ -102,6 +102,11 @@ def login():
             return redirect(url_for('login'))
         login_user(user, remember=form.remember.data)
         flash('Sucessfully logged in', 'success')
+
+        if user.role.name == 'admin':
+            return redirect(url_for('admin.index'))
+
+
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')

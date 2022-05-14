@@ -192,21 +192,6 @@
                 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <hr>
                 <table>
                     <!-- LinkedIn -->
@@ -265,10 +250,6 @@
                     <div>
                         <p> <span><strong>Abstract: </strong></span> {{ paper.abstract }}</p>
                     </div>
-                    <!-- <div>
-                        <h6>Link to the paper</h6>
-                        <p>{{ paper.paper_file }}</p>
-                    </div> -->
                 {% endfor %}
 
 
@@ -279,24 +260,34 @@
         <!--Centre details -->
 
         <div class="col-3 bg-light" style="padding-left:40px;"><br>
-            <h2 style="font-family:tahoma">
-                <i class="fas fa-id-badge"></i> Global ID
+            <h2 style="font-family:tahoma; display: inline-block;">
+                <i class="fas fa-id-badge"></i>&nbsp;
+                <span>#{{ user.id }}</span>
             </h2>
-            <p>Id from Database</p>
-            <br>
-            <h2 style="font-family:tahoma">
-                <i class="fas fa-envelope"></i> Email
-            </h2>
-            <p>{{ user.email }}</p><br>
+            <br><br><br>
 
-            <h2 style="font-family:tahoma">
-                <i class="fas fa-phone"></i> Phone
+            <h2 style="font-family:tahoma; display: inline-block;">
+                <i class="fas fa-envelope"></i>&nbsp;
             </h2>
-            <p>{{ user.faculty.phone_number }}</p><br>
-            <h2 style="font-family:tahoma">
-                <i class="fas fa-map-marker-alt"></i> Address
+            <span>{{ user.email }}</span>
+            <br><br><br>
+
+            <h2 style="font-family:tahoma; display: inline-block;">
+                <i class="fas fa-phone"></i>&nbsp;
             </h2>
-            <p>{{ user.faculty.address }}</p>
+            {% if user.faculty.phone_number %}
+            <span>{{ user.faculty.phone_number }}</span>
+            <br><br><br>
+            {% else %}
+            <br><br><br>
+            {% endif %}
+
+                <h2 style="font-family:tahoma; display: inline-block;">
+                    <i class="fas fa-map-marker-alt"></i>&nbsp;
+                </h2>
+            {% if user.faculty.address %}
+                <span>{{ user.faculty.address }}</span>
+            {% endif %}
         </div>
     </div>
 </div>
