@@ -9,5 +9,5 @@ def make_shell_context():
             'author_publish_paper': author_publish_paper}
 
 if __name__ == '__main__':
-    # app.run()
-    app.run(ssl_context='adhoc')
+    app.run()
+    # app.run(ssl_context='adhoc')
