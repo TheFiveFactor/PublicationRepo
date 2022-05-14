@@ -392,7 +392,7 @@ def view_paper(id):
     paper = PublishPaper.query.get_or_404(id)
     authors = [author.id for author in paper.authors]
     if not paper.is_paper_authorized:
-        if not (current_user.is_authenticated and current_user.id in authors):
+        if (not (current_user.is_authenticated and current_user.id in authors)) and current_user.role.name!='admin':
             flash("This paper is not authorized yet", "danger")
             next_page = request.args.get('next') or request.referrer or url_for('index')
             return redirect(next_page)
