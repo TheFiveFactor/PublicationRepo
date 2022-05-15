@@ -3,3 +3,4 @@ __pycache__/*
 .flaskenv
 __pycache__/
 .scannerwork/
+test-reports/  
