@@ -7,7 +7,7 @@ from flask import url_for, render_template, redirect, flash, request, send_from_
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from repository.models import DepartmentAreas, Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum, author_publish_paper
-from repository.forms import LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
+from repository.forms import EditPublishPaperForm, LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
     RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm, EditFacultyProfileForm
 
 import smtplib
@@ -236,23 +236,28 @@ def publish_paper():
     departments = Department.query.all()
     form = PublishPaperForm(request.form)
     if request.method == "POST" and form.validate():
-        # print(request.form)
-        # print(request.files)
         publish_paper_modal = PublishPaper(title=form.title.data,
             abstract=form.abstract.data, paper_type_id=int(form.paper_type.data),
-            department_area_id=int(form.department_area.data), publisher=form.publisher.data)
+            department_area_id=int(form.department_area.data), publisher=form.publisher.data,
+            published_year=int(form.published_year.data),
+            access=PaperAccessEnum[form.access.data]
+        )
         publish_paper_modal.unique_paper_id = PublishPaper.generate_unique_paper_id()
         for author_id in form.authors.data:
             author = User.query.filter_by(id=int(author_id)).first()
             if author:
                 publish_paper_modal.authors.append(author)
 
+        for citation_id in form.citations.data:
+            cit = PublishPaper.query.filter_by(id=int(citation_id)).first()
+            if cit:
+                publish_paper_modal.citations.append(cit)
+
         if 'paper_file' in request.files and request.files['paper_file'].filename != '':
             _, f_ext = os.path.splitext(request.files['paper_file'].filename)
             if f_ext[1:] not in ['pdf', 'csv', 'tsv', 'json', 'xlsx']:
                 flash('Invalid file type', 'danger')
                 return redirect(url_for('publish_paper'))
-            # print(f_ext[1:], str(PaperType.query.get(int(form.paper_type.data))).name.lower())
             if PaperType.query.get(int(form.paper_type.data)).name.lower() == 'dataset' and (f_ext[1:] not in ['csv', 'tsv', 'json', 'xlsx']):
                 flash("For Dataset extension should be in 'csv', 'tsv', 'json', 'xlsx'", 'danger')
                 return redirect(url_for('publish_paper'))
@@ -262,8 +267,77 @@ def publish_paper():
         db.session.add(publish_paper_modal)
         db.session.commit()
         flash('Your request has been submitted successfully', 'success')
-        return redirect(url_for('publish_paper'))
+        return redirect(url_for('view_paper', id=publish_paper_modal.id))
     return render_template('publish_paper.html',form=form, departments=departments)
+
+
+@app.route('/publish-paper/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_publish_paper(id):
+    if current_user.role.name == 'student':
+        flash('Students cannot edit papers', 'warning')
+        return redirect(url_for('index'))
+
+    paper = PublishPaper.query.get_or_404(id)
+    authors = [author.id for author in paper.authors]
+
+    if current_user.id not in authors:
+        flash('Only authors can edit the paper', 'warning')
+        return redirect(url_for('index'))
+
+    departments = Department.query.all()
+    form = EditPublishPaperForm(request.form)
+    if request.method == "POST" and form.validate():
+        paper.title = form.title.data
+        paper.abstract = form.abstract.data
+        paper.paper_type_id = int(form.paper_type.data)
+        paper.department_area_id = int(form.department_area.data)
+        paper.publisher = form.publisher.data
+        paper.published_year = int(form.published_year.data)
+        paper.access=PaperAccessEnum[form.access.data]
+
+        paper.authors[:] = []
+        for author_id in form.authors.data:
+            author = User.query.filter_by(id=int(author_id)).first()
+            if author:
+                paper.authors.append(author)
+
+        paper.citations = []
+        for citation_id in form.citations.data:
+            cit = PublishPaper.query.filter_by(id=int(citation_id)).first()
+            if cit and cit.id != paper.id:
+                paper.citations.append(cit)
+
+
+        if 'paper_file' in request.files and request.files['paper_file'].filename != '':
+            _, f_ext = os.path.splitext(request.files['paper_file'].filename)
+            if f_ext[1:] not in ['pdf', 'csv', 'tsv', 'json', 'xlsx']:
+                flash('Invalid file type', 'danger')
+                return redirect(url_for('edit_publish_paper', id=paper.id))
+            if PaperType.query.get(int(form.paper_type.data)).name.lower() == 'dataset' and (f_ext[1:] not in ['csv', 'tsv', 'json', 'xlsx']):
+                flash("For Dataset extension should be in 'csv', 'tsv', 'json', 'xlsx'", 'danger')
+                return redirect(url_for('edit_publish_paper', id=paper.id))
+            paper_file = save_publish_paper_pdf(request.files['paper_file'])
+            paper.paper_file = paper_file
+        db.session.commit()
+        flash('Successfully updated the paper', 'success')
+        return redirect(url_for('view_paper', id=paper.id))
+    elif request.method == "GET":
+        author_ids = [int(i[0]) for i in form.authors.choices]
+        form.authors.default = tuple([a.id for a in paper.authors])
+        form.citations.default = tuple([c.id for c in paper.citations.all()])
+        form.department_area.default = paper.department_area_id
+        form.access.default = str(paper.access.name)
+
+        form.process()
+        form.title.data = paper.title
+        form.abstract.data = paper.abstract
+        form.paper_type.data = paper.paper_type_id
+        form.publisher.data = paper.publisher
+        form.published_year.data = paper.published_year
+
+
+    return render_template('edit_publish_paper.html',form=form, departments=departments)
 
 @app.route('/faculty/all')
 def all_faculties():
@@ -276,7 +350,6 @@ def all_faculties():
     if author_q:
         if mode == 'desc':
             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%")).order_by(User.fname.desc())
-            # faculties = User.filter(User.name.like('%' + author_q + '%'))
         else:
             faculties = User.query.join(Role).filter(Role.name=="faculty").filter(User.fname.ilike("%" + author_q + "%") | User.lname.ilike("%" + author_q + "%"))
     else:
@@ -288,8 +361,6 @@ def all_faculties():
 
     page = request.args.get('page', 1, type=int)
     faculties = faculties.paginate(page, app.config['FACULTIES_PER_PAGE'], False)
-    # faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, app.config['FACULTIES_PER_PAGE'], False)
-    # faculties = User.query.join(Role).filter(Role.name=="faculty").paginate(page, 1, False)
     return render_template('all_faculties.html', title='All Faculties', faculties=faculties)
 
 @app.route('/faculty/<int:id>/edit', methods=['GET', 'POST'])
@@ -305,7 +376,7 @@ def faculty_edit_profile(id):
         current_user.email = fedit_form.email.data
         current_user.institution_id = int(fedit_form.institution.data)
 
-        print(request.files)
+        # print(request.files)
 
         if 'picture' in request.files and request.files['picture'].filename != '':
             picture_file = save_profile_picture(request.files['picture'])
@@ -402,8 +473,11 @@ def view_paper(id):
             next_page = request.args.get('next') or request.referrer or url_for('index')
             return redirect(next_page)
     paper_access = paper.access == PaperAccessEnum.ALLOW_ALL
+    citations = paper.citations.all()
+    citedby = paper.citedby.all()
 
-    return render_template('view_paper.html', title='View Paper', paper=paper, paper_access=paper_access)
+    return render_template('view_paper.html', title='View Paper', paper=paper,
+        paper_access=paper_access, citations=citations, citedby=citedby)
 
 @app.route('/paper/<int:id>/download')
 def download_paper(id):
@@ -414,7 +488,6 @@ def download_paper(id):
             flash("This paper is not authorized yet", "danger")
             next_page = request.args.get('next') or request.referrer or url_for('index')
             return redirect(next_page)
-    # paper_access = paper.access == PaperAccessEnum.ALLOW_ALL
     return send_file(
         os.path.join(app.root_path, 'protected', paper.paper_file),
         as_attachment=True

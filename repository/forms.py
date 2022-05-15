@@ -7,7 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Selec
     FileField, TextAreaField, SelectMultipleField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from wtforms.widgets import TextArea
-from repository.models import Department, DepartmentAreas, PaperType, User, Role, Institution, PaperAccessEnum
+from repository.models import Department, DepartmentAreas, PaperType, PublishPaper, User, Role, Institution, PaperAccessEnum
 from datetime import datetime
 
 
@@ -95,13 +95,32 @@ class PublishPaperForm(FlaskForm):
         choices=[(paper_type.id, paper_type.name) for paper_type in PaperType.query.all()], validators=[DataRequired()])
     department_area = SelectField('Department Area Collection',
         choices=[(str(department_area.id), department_area.name) for department_area in DepartmentAreas.query.all()], validators=[DataRequired()])
-    authors = SelectMultipleField(choices=[(str(user.id), user.fname + " " + user.lname) for user in User.getWhoCanPublish()],
+    authors = SelectMultipleField(choices=[(str(user.id), user.fname + " " + user.lname + " @" + user.email[:user.email.index('@')]) for user in User.getWhoCanPublish()],
         validators=[DataRequired()])
+    citations = SelectMultipleField('Citations',
+        choices=[(str(pub_paper.id), pub_paper.title + " #" + pub_paper.unique_paper_id) for pub_paper in PublishPaper.query.all()])
     publisher = StringField('Publisher', validators=[DataRequired(), Length(min=1, max=255)])
     published_year = IntegerField('Publishing Year', validators=[DataRequired(), NumberRange(min=1950, max=datetime.utcnow().year)])
     access = SelectField('Access', choices=PaperAccessEnum.fetch_fields(), validators=[DataRequired()])
     paper_file = FileField('Upload file', validators=[FileAllowed(['pdf', 'csv', 'tsv', 'json', 'xlsx'])])
     submit = SubmitField('Publish Paper')
+
+class EditPublishPaperForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(min=1, max=255)])
+    abstract = TextAreaField('Abstract', widget=TextArea(), validators=[DataRequired()])
+    paper_type = SelectField('Paper Type',
+        choices=[(paper_type.id, paper_type.name) for paper_type in PaperType.query.all()], validators=[DataRequired()])
+    department_area = SelectField('Department Area Collection',
+        choices=[(str(department_area.id), department_area.name) for department_area in DepartmentAreas.query.all()], validators=[DataRequired()])
+    authors = SelectMultipleField(choices=[(str(user.id), user.fname + " " + user.lname + " @" + user.email[:user.email.index('@')]) for user in User.getWhoCanPublish()],
+        validators=[DataRequired()])
+    citations = SelectMultipleField('Citations',
+        choices=[(str(pub_paper.id), pub_paper.title + " #" + pub_paper.unique_paper_id) for pub_paper in PublishPaper.query.all()])
+    publisher = StringField('Publisher', validators=[DataRequired(), Length(min=1, max=255)])
+    published_year = IntegerField('Publishing Year', validators=[DataRequired(), NumberRange(min=1950, max=datetime.utcnow().year)])
+    access = SelectField('Access', choices=PaperAccessEnum.fetch_fields(), validators=[DataRequired()])
+    paper_file = FileField('Upload file', validators=[FileAllowed(['pdf', 'csv', 'tsv', 'json', 'xlsx'])])
+    submit = SubmitField('Update Paper')
 
 class EditFacultyProfileForm(FlaskForm):
     fname = StringField('First Name', validators=[DataRequired(), Length(min=1, max=20)])

@@ -9,6 +9,10 @@
     <div class="container p-2 my-2">
         <table class="table">
         <tbody>
+            {% if not paper.is_authorized %}
+                <th scope="row">Authorization:</th>
+                <td><span class="badge badge-danger">This is not authorized yet</span></td>
+            {% endif %}
             <tr>
                 <th scope="row">Title:</th>
                 <td>
@@ -41,6 +45,31 @@
                 <th scope="row">Appears in Department:</th>
                 <td>{{ paper.department_area.department.name }}</td>
             </tr>
+            {% if citations != [] %}
+            <tr>
+                <th scope="row">Citations</th>
+                <td>
+                    <ul style="list-style-type: none;">
+                        {% for pcit in citations %}
+                            <li><a href="{{ url_for('view_paper', id=pcit.id) }}">{{ pcit.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endif %}
+
+            {% if citedby != [] %}
+            <tr>
+                <th scope="row">Cited By</th>
+                <td>
+                    <ul style="list-style-type: none;">
+                        {% for pcit in citedby %}
+                            <li><a href="{{ url_for('view_paper', id=pcit.id) }}">{{ pcit.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endif %}
             <tr>
                 <th scope="row">Publisher:</th>
                 <td>{{ paper.publisher }}</td>
@@ -54,6 +83,7 @@
 
         {% if current_user in paper.authors %}
             <button class="btn btn-danger" onclick="confirmDelete();">Delete</button>
+            <a class="btn btn-warning" href="{{ url_for('edit_publish_paper', id=paper.id) }}">Edit</a>
         {% endif %}
     </div>
 

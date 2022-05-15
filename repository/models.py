@@ -154,6 +154,12 @@ author_publish_paper = db.Table('author_publish_papers',
     db.Column('publish_paper_id', db.Integer, db.ForeignKey('publish_paper.id'), primary_key=True)
 )
 
+citations_tree = db.Table(
+    'citations_tree',
+    db.Column('citedby_id', db.Integer, db.ForeignKey('publish_paper.id')),
+    db.Column('citation_id', db.Integer, db.ForeignKey('publish_paper.id'))
+)
+
 class PublishPaper(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -168,6 +174,15 @@ class PublishPaper(db.Model):
     paper_file = db.Column(db.String(155), nullable=True)
     access = db.Column(db.Enum(PaperAccessEnum), default=PaperAccessEnum.ALLOW_ALL)
     is_paper_authorized = db.Column(db.Boolean, nullable=True)
+    citations = db.relationship(
+        'PublishPaper',
+        secondary=citations_tree,
+        primaryjoin=(citations_tree.c.citedby_id == id),
+        secondaryjoin=(citations_tree.c.citation_id == id),
+        backref=db.backref('citedby', lazy='dynamic'),
+        lazy='dynamic'
+    )
+
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
