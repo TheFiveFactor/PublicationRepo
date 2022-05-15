@@ -4,7 +4,7 @@
 name: Python package
 
 env:
-  DATABASE_URI: 'postgresql://axebehdqdbvcsp:f1089ff13ae8b11660dd9e2abd87dcb227c919fe66470b1c335fc3e6099d7038@ec2-34-253-29-48.eu-west-1.compute.amazonaws.com:5432/dd9ve4ktsrru29'
+  DATABASE_URI: ${{ secrets.DATABASE_URI }}
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v3
