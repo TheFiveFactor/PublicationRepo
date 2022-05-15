@@ -1,4 +1,3 @@
-import email
 import functools
 import pytest
 
@@ -110,7 +109,5 @@ def test_revert_change_password(client):
 #     assert User.query.filter_by(email='testbb@example.com').first() == None
 # Balanisha - Endtesting
 
-# if __name__ == '__main__':
-#     import xmlrunner
-#     runner = xmlrunner.XMLTestRunner(output='test-reports')
-#     pytest.main(testRunner=runner)
+if __name__ == '__main__':
+    pytest.main(['-v'])
