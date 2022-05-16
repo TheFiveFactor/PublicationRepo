@@ -518,10 +518,35 @@ def download_paper(id):
             flash("This paper is not authorized yet", "danger")
             next_page = request.args.get('next') or request.referrer or url_for('index')
             return redirect(next_page)
-    return send_file(
-        os.path.join(app.root_path, 'protected', paper.paper_file),
-        as_attachment=True
-    )
+    if paper.access == PaperAccessEnum.ALLOW_ALL:
+        return send_file(
+            os.path.join(app.root_path, 'protected', paper.paper_file),
+            as_attachment=True
+        )
+    elif paper.access == PaperAccessEnum.ONLY_YOUR_COLLEGE:
+        author_instituions = [author.institution.name for author in paper.authors]
+        if current_user.is_authenticated:
+            if current_user.role.name != "student" or \
+                (current_user.institution.name in author_instituions):
+                return send_file(
+                    os.path.join(app.root_path, 'protected', paper.paper_file),
+                    as_attachment=True
+                )
+        flash("Authorized only for faculties and their college students", 'warning')
+        return redirect(url_for('view_paper', id=paper.id))
+    else:
+        if current_user.is_authenticated and current_user.role.name in ['faculty', 'admin', 'panel']:
+            return send_file(
+                os.path.join(app.root_path, 'protected', paper.paper_file),
+                as_attachment=True
+            )
+        flash("Authorized only for faculties", 'warning')
+        return redirect(url_for('view_paper', id=paper.id))
+
+    # return send_file(
+    #     os.path.join(app.root_path, 'protected', paper.paper_file),
+    #     as_attachment=True
+    # )
 
 @app.route('/paper/<int:id>/delete')
 @login_required
