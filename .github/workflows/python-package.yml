@@ -5,6 +5,8 @@ name: Python package
 
 env:
   DATABASE_URI: ${{secrets.DATABASE_URI}}
+  MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
 
 on:
   push:
