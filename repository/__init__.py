@@ -1,3 +1,4 @@
+import asyncio
 import os
 from flask import Flask, flash, redirect, url_for, request
 from config import Config
@@ -10,9 +11,11 @@ from flask_admin import BaseView, expose
 from flask_executor import Executor
 from flask_admin.contrib import sqla as flask_admin_sqla
 from authlib.integrations.flask_client import OAuth
+# from flask_mailing import Mail
 
 import smtplib
 from email.message import Message
+# from flask_mailing import Message
 from sqlalchemy import func, text
 
 app = Flask(__name__)
@@ -26,6 +29,9 @@ login.login_view = 'login'
 login.login_message = 'You need to be logged in to view this page'
 login.login_message_category = 'info'
 executor = Executor(app)
+
+# Mail
+# mail = Mail(app)
 
 # GitHub Configuration
 oauth = OAuth(app)
@@ -110,37 +116,31 @@ class PendingPaper(BaseView):
     def send_rejection_mail(self, paper, recipients, reason):
         msg = Message()
         msg['Subject'] = "Paper Request Rejection"
-        msg['From'] = app.config['MAIL_USERNAME']
+        msg['From'] = app.config['NOREPLY_NAME']
         msg['To'] = ", ".join(recipients)
         msg.add_header('Content-Type','text/html')
-
-        message = """Sorry, Your request to the paper of title <h2 style='display: inline-block;'>{}</h2> is <b>rejected</b>, And here is the reason why?\n
-            <b>{}</b>""".format(paper.title, reason)
-        s = smtplib.SMTP("smtp.gmail.com", 587)
+        message = """Sorry, Your request to the paper of title <h2 style='display: inline-block;'>{}</h2> is <b>rejected</b>, And here is the reason why?\n<b>{}</b>""".format(paper.title, reason)
         msg.set_payload(message)
-        s.starttls()
-        s.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        s.sendmail(msg['From'], recipients, msg.as_string())
-        s.quit()
+
+        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
+            server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+            server.sendmail(msg['From'], recipients, msg.as_string())
 
     def send_approved_mail(self, paper, recipients):
         msg = Message()
         msg['Subject'] = "Paper Request Approval"
-        msg['From'] = app.config['MAIL_USERNAME']
+        msg['From'] = app.config['NOREPLY_NAME']
         msg['To'] = ", ".join(recipients)
         msg.add_header('Content-Type','text/html')
-
         message = """Congratulations! Your request to the paper of title <h2 style='display: inline-block;'>{}</h2> is <b>Approved</b>""".format(paper.title)
-        s = smtplib.SMTP("smtp.gmail.com", 587)
         msg.set_payload(message)
-        s.starttls()
-        s.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        s.sendmail(msg['From'], recipients, msg.as_string())
-        s.quit()
+
+        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
+            server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+            server.sendmail(msg['From'], recipients, msg.as_string())
 
     @expose('/')
     def index(self):
-        print(request.url)
         papers = models.PublishPaper.query.filter_by(is_paper_authorized=None).all()
         return self.render('pending_paper_index.html', papers=papers)
 
@@ -158,12 +158,31 @@ class PendingPaper(BaseView):
             paper.is_paper_authorized = False
             db.session.commit()
             executor.submit(self.send_rejection_mail, paper, emails, reject_reason)
+            # loop = None
+            # try:
+            #     loop = asyncio.get_event_loop()
+            # except RuntimeError as ex:
+            #     if "There is no current event loop in thread" in str(ex):
+            #         loop = asyncio.new_event_loop()
+            #         asyncio.set_event_loop(loop)
+            #         loop = asyncio.get_event_loop()
+            # loop.run_until_complete(self.send_rejection_mail(paper, emails, reject_reason))
+            # loop.close()
             return redirect(url_for('pending_paper.index'))
 
         paper.is_paper_authorized = True
         db.session.commit()
-        print(emails)
         executor.submit(self.send_approved_mail, paper, emails)
+        # loop = None
+        # try:
+        #     loop = asyncio.get_event_loop()
+        # except RuntimeError as ex:
+        #     if "There is no current event loop in thread" in str(ex):
+        #         loop = asyncio.new_event_loop()
+        #         asyncio.set_event_loop(loop)
+        #         loop = asyncio.get_event_loop()
+        # loop.run_until_complete(self.send_approved_mail(paper, emails))
+        # loop.close()
         return redirect(url_for('pending_paper.index'))
 
 admin.add_view(AnalyticsView(name='Analytics', endpoint='analytics'))
