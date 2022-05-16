@@ -48,6 +48,16 @@ github = oauth.register(
 )
 
 from repository import routes, models
+from flask_admin.menu import MenuLink
+
+class LoginMenuLink(MenuLink):
+    def is_accessible(self):
+        return not current_user.is_authenticated
+
+
+class LogoutMenuLink(MenuLink):
+    def is_accessible(self):
+        return current_user.is_authenticated
 
 # Admin
 class MyAdminIndexView(AdminIndexView):
@@ -94,6 +104,8 @@ admin.add_view(DefaultModelView(models.Department, db.session))
 admin.add_view(DefaultModelView(models.DepartmentAreas, db.session))
 admin.add_view(DefaultModelView(models.PaperType, db.session))
 admin.add_view(DefaultModelView(models.PublishPaper, db.session))
+admin.add_link(LogoutMenuLink(name='Logout', category='', url='/logout'))
+admin.add_link(LoginMenuLink(name='Login', category='', url='/users/login'))
 
 class AnalyticsView(BaseView):
     @expose('/')
