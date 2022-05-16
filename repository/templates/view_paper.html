@@ -9,7 +9,7 @@
     <div class="container p-2 my-2">
         <table class="table">
         <tbody>
-            {% if not paper.is_authorized %}
+            {% if paper.is_authorized == None %}
                 <th scope="row">Authorization:</th>
                 <td><span class="badge badge-danger">This is not authorized yet</span></td>
             {% endif %}
@@ -107,7 +107,7 @@
                 {% endif %}
                 <tr>
                     <td>
-                        <a href="{{ paper.get_paper_file_url() }}" >{{ paper.get_paper_name() }}</a>
+                        <a href="{{ paper.get_paper_file_url() }}"  target="_blank">{{ paper.get_paper_name() }}</a>
                     </td>
                     <td>{{ paper.get_paper_size(unit="KB") }}KB</td>
                     <td>{{ paper.paper_file.split(".")[-1] }}</td>
