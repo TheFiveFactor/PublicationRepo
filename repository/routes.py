@@ -149,6 +149,11 @@ def edit_profile():
     if current_user.by_email != True:
         return redirect(url_for('index'))
     form = EditProfileForm(request.form)
+    # print(request.form)
+    # print(current_user)
+    # print(form.validate_on_submit())
+    # for field, errors in form.errors.items():
+    #     print(', '.join(errors))
     if form.validate_on_submit():
         current_user.fname = form.fname.data
         current_user.lname = form.lname.data
@@ -370,7 +375,13 @@ def faculty_edit_profile(id):
         flash('You are unauthorized to edit that faculty', 'danger')
         return redirect(url_for('index'))
     fedit_form = EditFacultyProfileForm(request.form)
+    # print(request.form)
+    # print(current_user)
+    # print(fedit_form.validate_on_submit())
+    # for field, errors in fedit_form.errors.items():
+    #     print(', '.join(errors))
     if fedit_form.validate_on_submit():
+        # print(['validated'])
         current_user.fname = fedit_form.fname.data
         current_user.lname = fedit_form.lname.data
         current_user.email = fedit_form.email.data
