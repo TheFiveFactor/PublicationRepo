@@ -15,6 +15,10 @@ class Config(object):
     MAIL_USE_SSL = False
     USE_CREDENTIALS = True
     VALIDATE_CERTS = True
+
+    MAIL_SUPPRESS_SEND = False
+    MAIL_DEBUG = True
+    TESTING = False
     # end change
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
