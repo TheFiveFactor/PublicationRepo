@@ -9,9 +9,9 @@ from werkzeug.urls import url_parse
 from repository.models import DepartmentAreas, Faculty, Institution, PaperType, PublishPaper, Role, User, Department, PaperAccessEnum, author_publish_paper
 from repository.forms import EditPublishPaperForm, LoginForm, RegistrationForm, EditProfileForm, ChangePasswordForm, \
     RequestPasswordResetForm, ResetPasswordForm, PublishPaperForm, EditFacultyProfileForm
-
-import smtplib
-from email.message import Message
+import asyncio
+from repository import mail
+from flask_mailing import Message
 from sqlalchemy import func, text
 
 # Utils
@@ -38,27 +38,38 @@ def save_publish_paper_pdf(form_paper):
     form_paper.save(paper_path)
     return paper_fn
 
-def send_reset_email(user):
+# def send_reset_email(user):
+#     expire_ex = 1200
+#     token = user.get_reset_token(expire_ex)
+
+#     msg = Message()
+#     msg['Subject'] = "Password Reset Request"
+#     msg['From'] = app.config['MAIL_USERNAME']
+#     msg['To'] = user.email
+#     msg.add_header('Content-Type','text/html')
+
+#     message = """To reset your password, click the following link:
+#         {}<br> This is valid for <b>{}</b> mins.<br>
+#         If you didn't make the request then simply ignore this mail
+#         """.format(url_for('reset_token', token=token, _external=True), expire_ex//60)
+#     s = smtplib.SMTP("smtp.gmail.com", 587)
+#     msg.set_payload(message)
+#     s.starttls()
+#     # print(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+#     s.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+#     s.sendmail(msg['From'], [msg['To']], msg.as_string())
+#     s.quit()
+
+async def send_reset_email(user):
     expire_ex = 1200
     token = user.get_reset_token(expire_ex)
 
-    msg = Message()
-    msg['Subject'] = "Password Reset Request"
-    msg['From'] = app.config['MAIL_USERNAME']
-    msg['To'] = user.email
-    msg.add_header('Content-Type','text/html')
-
-    message = """To reset your password, click the following link:
+    html_msg = """To reset your password, click the following link:
         {}<br> This is valid for <b>{}</b> mins.<br>
         If you didn't make the request then simply ignore this mail
         """.format(url_for('reset_token', token=token, _external=True), expire_ex//60)
-    s = smtplib.SMTP("smtp.gmail.com", 587)
-    msg.set_payload(message)
-    s.starttls()
-    # print(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-    s.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-    s.sendmail(msg['From'], [msg['To']], msg.as_string())
-    s.quit()
+    msg = Message(sender=app.config['MAIL_USERNAME'], recipients=[user.email], subject="Password Reset Request", html=html_msg, subtype='html')
+    await mail.send_message(msg)
 
 # Routes
 @app.route('/')
@@ -218,8 +229,17 @@ def forgot_password():
     form = RequestPasswordResetForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        send_reset_email(user)
-        # time.sleep(5)
+        # send_reset_email(user)
+        loop = None
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError as ex:
+            if "There is no current event loop in thread" in str(ex):
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop = asyncio.get_event_loop()
+        loop.run_until_complete(send_reset_email(user))
+        loop.close()
         flash('An email has been sent with instruction to reset your password', 'info')
         return redirect(url_for('forgot_password'))
     return render_template('forgot_password.html', title='Reset Password', form=form)
